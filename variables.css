@@ -1,0 +1,125 @@
+/* ============================================================
+   variables.css — design tokens + theme palettes
+   ============================================================ */
+:root{
+  --font-display:"Bricolage Grotesque", system-ui, sans-serif;
+  --font-ui:"Manrope", system-ui, sans-serif;
+  --font-mono:"JetBrains Mono", ui-monospace, monospace;
+  --font-ar:"IBM Plex Sans Arabic", system-ui, sans-serif;
+
+  --r-xs:10px; --r-sm:14px; --r-md:20px; --r-lg:28px; --r-xl:36px;
+  --gap:18px;
+  --maxw:1180px;
+
+  /* user-tunable (overridden live by JS) */
+  --user-accent:initial;
+  --glass-blur:18px;
+  --card-alpha:1;
+  --bg-blur:0px;
+  --bg-bright:1;
+  --bg-image:none;
+  --radius-scale:1;
+
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --ease-out:cubic-bezier(.16,1,.3,1);
+}
+
+/* ---------- Aurora (signature default) ---------- */
+[data-theme="aurora"]{
+  --bg:#070710; --bg-2:#0d0d1c;
+  --fg:#eef0ff; --muted:#9aa0c4;
+  --card:rgba(22,23,42,.62); --card-brd:rgba(150,160,255,.14);
+  --card-hover:rgba(34,36,64,.78);
+  --accent:#7c9cff; --accent-2:#c08bff; --accent-3:#54e6c8;
+  --shadow:0 24px 60px -28px rgba(0,0,0,.8);
+  --grad:radial-gradient(120% 120% at 15% 0%,#1a1b3a 0%,#0a0a18 42%,#05050d 100%);
+  --orb-1:#5b6cff; --orb-2:#b06bff; --orb-3:#2fd9c0;
+  --glass-blur:20px; --on-accent:#0a0a18;
+}
+/* ---------- Light ---------- */
+[data-theme="light"]{
+  --bg:#f4f5fb; --bg-2:#ffffff;
+  --fg:#1a1c2c; --muted:#6b7090;
+  --card:rgba(255,255,255,.78); --card-brd:rgba(20,24,60,.08);
+  --card-hover:rgba(255,255,255,.95);
+  --accent:#4f6bff; --accent-2:#8b5cf6; --accent-3:#0fb39a;
+  --shadow:0 22px 50px -26px rgba(40,50,120,.4);
+  --grad:radial-gradient(120% 120% at 12% 0%,#eef1ff 0%,#f5f6fc 50%,#eceefb 100%);
+  --orb-1:#9db4ff; --orb-2:#d7b8ff; --orb-3:#9fe9da;
+  --glass-blur:16px; --on-accent:#fff;
+}
+/* ---------- Dark ---------- */
+[data-theme="dark"]{
+  --bg:#0f1117; --bg-2:#161a24;
+  --fg:#e7ebf5; --muted:#8b93a7;
+  --card:rgba(26,30,42,.7); --card-brd:rgba(255,255,255,.08);
+  --card-hover:rgba(34,40,56,.85);
+  --accent:#5e9bff; --accent-2:#7c8cff; --accent-3:#36d39a;
+  --shadow:0 24px 56px -28px rgba(0,0,0,.75);
+  --grad:radial-gradient(120% 120% at 15% 0%,#1a1f2e 0%,#10131b 55%,#0b0d13 100%);
+  --orb-1:#3d6fe0; --orb-2:#6f6fe0; --orb-3:#2bb98a;
+  --glass-blur:16px; --on-accent:#0b0d13;
+}
+/* ---------- AMOLED ---------- */
+[data-theme="amoled"]{
+  --bg:#000000; --bg-2:#050505;
+  --fg:#f2f2f2; --muted:#7d7d85;
+  --card:rgba(14,14,16,.82); --card-brd:rgba(255,255,255,.07);
+  --card-hover:rgba(22,22,26,.92);
+  --accent:#00e0b8; --accent-2:#4f8bff; --accent-3:#ff5fa8;
+  --shadow:0 20px 50px -26px rgba(0,0,0,1);
+  --grad:radial-gradient(120% 120% at 50% -10%,#0a0a0a 0%,#000 60%);
+  --orb-1:#00e0b8; --orb-2:#1a3aff; --orb-3:#ff2f8a;
+  --glass-blur:10px; --on-accent:#000;
+}
+/* ---------- Glassmorphism ---------- */
+[data-theme="glass"]{
+  --bg:#1c2540; --bg-2:#26345c;
+  --fg:#f6f8ff; --muted:#c2cbe8;
+  --card:rgba(255,255,255,.12); --card-brd:rgba(255,255,255,.28);
+  --card-hover:rgba(255,255,255,.2);
+  --accent:#8fd0ff; --accent-2:#ff9ad5; --accent-3:#a7ffce;
+  --shadow:0 28px 64px -26px rgba(10,20,60,.6);
+  --grad:linear-gradient(135deg,#3a2b6e 0%,#26527e 45%,#2b8a9c 100%);
+  --orb-1:#7ab8ff; --orb-2:#ff86c8; --orb-3:#7dffc0;
+  --glass-blur:26px; --card-alpha:1; --on-accent:#10183a;
+}
+/* ---------- Cyberpunk ---------- */
+[data-theme="cyber"]{
+  --bg:#0a0014; --bg-2:#15002b;
+  --fg:#f7e9ff; --muted:#b07fd6;
+  --card:rgba(28,4,48,.66); --card-brd:rgba(255,46,180,.35);
+  --card-hover:rgba(42,6,72,.82);
+  --accent:#ff2ea6; --accent-2:#00f0ff; --accent-3:#ffd23f;
+  --shadow:0 24px 60px -24px rgba(255,46,166,.35);
+  --grad:radial-gradient(120% 120% at 80% 0%,#2a0040 0%,#10001f 50%,#06000c 100%);
+  --orb-1:#ff2ea6; --orb-2:#00f0ff; --orb-3:#9d00ff;
+  --glass-blur:14px; --on-accent:#0a0014;
+}
+/* ---------- Minimal ---------- */
+[data-theme="minimal"]{
+  --bg:#fafafa; --bg-2:#ffffff;
+  --fg:#161616; --muted:#777;
+  --card:rgba(255,255,255,.9); --card-brd:rgba(0,0,0,.1);
+  --card-hover:#fff;
+  --accent:#222; --accent-2:#555; --accent-3:#888;
+  --shadow:0 14px 36px -22px rgba(0,0,0,.35);
+  --grad:linear-gradient(180deg,#fbfbfb,#f3f3f3);
+  --orb-1:#e6e6e6; --orb-2:#ededed; --orb-3:#f0f0f0;
+  --glass-blur:8px; --on-accent:#fff;
+}
+/* ---------- Luxury ---------- */
+[data-theme="luxury"]{
+  --bg:#0c0a06; --bg-2:#15110a;
+  --fg:#f4ecd8; --muted:#a89878;
+  --card:rgba(28,23,12,.66); --card-brd:rgba(212,175,90,.28);
+  --card-hover:rgba(40,33,18,.82);
+  --accent:#d4af5a; --accent-2:#caa24b; --accent-3:#e7d9a8;
+  --shadow:0 26px 60px -26px rgba(0,0,0,.85);
+  --grad:radial-gradient(120% 120% at 20% 0%,#241c0e 0%,#120e07 55%,#0a0805 100%);
+  --orb-1:#d4af5a; --orb-2:#8a6d2c; --orb-3:#e7d9a8;
+  --glass-blur:16px; --on-accent:#15110a;
+}
+
+/* accent override hook */
+:root[style*="--user-accent"] [data-accent-target]{ }
