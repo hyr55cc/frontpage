@@ -371,3 +371,30 @@ html[dir="rtl"] .switch.on::after{ right:23px; }
   .widgets{ grid-template-columns:1fr; }
   .bm-grid{ grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); }
 }
+
+/* ---------- search suggestions ---------- */
+.engine-sug{
+  position:absolute; top:calc(100% + 8px); left:0; right:0; z-index:30;
+  background:color-mix(in srgb,var(--card) 96%,var(--bg)); border:1px solid var(--card-brd);
+  border-radius:16px; padding:6px; box-shadow:var(--shadow);
+  -webkit-backdrop-filter:blur(calc(var(--glass-blur) + 6px)); backdrop-filter:blur(calc(var(--glass-blur) + 6px));
+  animation:pop-in .18s var(--ease-out) both;
+}
+.engine-sug .sug-row{
+  display:flex; align-items:center; gap:10px; width:100%; text-align:start;
+  padding:9px 12px; border:none; background:none; color:var(--fg); cursor:pointer;
+  border-radius:11px; font:inherit; font-size:.92rem;
+}
+.engine-sug .sug-row span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.engine-sug .sug-row:hover, .engine-sug .sug-row.active{ background:color-mix(in srgb,var(--accent) 16%,transparent); }
+html[dir="rtl"] .engine-sug .sug-row{ text-align:right; }
+
+/* ---------- folder view ---------- */
+.bm-folders{ display:flex; flex-direction:column; gap:26px; }
+.bm-folder-head{ display:flex; align-items:center; gap:10px; margin:0 4px 12px; }
+.bm-folder-name{ font-family:var(--font-display); font-weight:700; font-size:1.05rem; letter-spacing:-.01em; }
+.bm-folder-count{
+  font:600 .72rem/1 var(--font-mono); color:var(--muted);
+  background:color-mix(in srgb,var(--card) 80%,transparent); border:1px solid var(--card-brd);
+  padding:3px 8px; border-radius:999px;
+}

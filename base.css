@@ -29,12 +29,41 @@ kbd{
 /* ---------- background stack ---------- */
 .bg-stack{ position:fixed; inset:0; z-index:-1; overflow:hidden; }
 .bg-layer{ position:absolute; inset:0; }
-.bg-gradient{ background:var(--grad); transition:background .6s var(--ease); }
+.bg-gradient{
+  background:var(--grad);
+  filter:blur(var(--bg-blur)) brightness(var(--bg-bright)) saturate(var(--bg-sat));
+  transition:background .6s var(--ease), filter .4s var(--ease);
+}
 .bg-image{
   background-image:var(--bg-image); background-size:cover; background-position:center;
-  filter:blur(var(--bg-blur)) brightness(var(--bg-bright));
+  filter:blur(var(--bg-blur)) brightness(var(--bg-bright)) saturate(var(--bg-sat));
   transform:scale(1.06);
   transition:filter .4s var(--ease), opacity .6s var(--ease);
+}
+/* ---------- animated backgrounds ---------- */
+.bg-gradient.anim-aurora{
+  background:linear-gradient(125deg,#0a0a1f,#1b2a6b,#0d6e7a,#5b2a8a,#0a0a1f);
+  background-size:400% 400%; animation:auroraShift 26s ease infinite;
+}
+.bg-gradient.anim-space{
+  background:radial-gradient(130% 130% at 50% 10%,#1a1140,#0a0a22 45%,#04040c),
+             radial-gradient(60% 60% at 80% 20%,rgba(120,90,255,.25),transparent);
+  background-size:160% 160%, 100% 100%; animation:spaceDrift 40s ease infinite;
+}
+.bg-gradient.anim-cyber{
+  background:linear-gradient(125deg,#12002b,#ff2ea6,#00f0ff,#12002b);
+  background-size:400% 400%; animation:auroraShift 18s linear infinite;
+}
+.bg-gradient.anim-nature{
+  background:linear-gradient(125deg,#0b2515,#1f6f4a,#3fa66f,#0d3a22,#0b2515);
+  background-size:400% 400%; animation:auroraShift 30s ease infinite;
+}
+/* ---------- mouse-follow glow ---------- */
+.bg-glow{
+  position:absolute; width:520px; height:520px; left:0; top:0; border-radius:50%;
+  background:radial-gradient(circle, color-mix(in srgb, var(--accent) 40%, transparent), transparent 62%);
+  filter:blur(40px); opacity:.0; pointer-events:none; transform:translate(-50%,-50%);
+  transition:opacity .5s var(--ease); mix-blend-mode:screen; will-change:left,top;
 }
 .bg-particles{ width:100%;height:100%; opacity:.7; }
 .bg-grain{

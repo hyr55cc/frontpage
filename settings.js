@@ -31,8 +31,9 @@ const Settings = (() => {
         <div class="seg">${Object.entries(Themes.FONTS).map(([k,v])=>`<button class="${s.uiFont===k?'active':''}" data-font="${k}">${v}</button>`).join("")}</div>
       </div>
       <div class="field"><label>${I18N.t("bmViewLabel")}</label>
-        <div class="seg"><button class="${s.bmView==='grid'?'active':''}" data-view="grid">${I18N.t("grid")}</button><button class="${s.bmView==='list'?'active':''}" data-view="list">${I18N.t("list")}</button></div>
+        <div class="seg"><button class="${s.bmView==='grid'?'active':''}" data-view="grid">${I18N.t("grid")}</button><button class="${s.bmView==='list'?'active':''}" data-view="list">${I18N.t("list")}</button><button class="${s.bmView==='folder'?'active':''}" data-view="folder">${I18N.t("folder")}</button></div>
       </div>
+      <div class="toggle-row"><span class="t-name">${I18N.t("suggestions")}</span><button class="switch ${s.suggest?'on':''}" data-suggest></button></div>
       <div class="field"><label>${I18N.t("glassBlur")} · ${s.glassBlur}px</label><input type="range" class="slider" min="0" max="40" value="${s.glassBlur}" data-blur></div>
       <div class="field"><label>${I18N.t("cardOpacity")} · ${Math.round(s.cardAlpha*100)}%</label><input type="range" class="slider" min="30" max="100" value="${s.cardAlpha*100}" data-alpha></div>
       <div class="field"><label>${I18N.t("corners")} · ${Math.round(s.radiusScale*100)}%</label><input type="range" class="slider" min="40" max="160" value="${s.radiusScale*100}" data-radius></div>`;
@@ -40,6 +41,7 @@ const Settings = (() => {
   function chipBg(t){
     const m={aurora:"radial-gradient(120% 120% at 15% 0%,#1a1b3a,#0a0a18)",light:"#eef1ff",dark:"#161a24",amoled:"#000",
       glass:"linear-gradient(135deg,#3a2b6e,#2b8a9c)",cyber:"radial-gradient(120% 120% at 80% 0%,#2a0040,#06000c)",
+      midnight:"radial-gradient(120% 120% at 25% 0%,#10224d,#050a1c)",vision:"radial-gradient(130% 130% at 50% -10%,#34384a,#15171f)",
       minimal:"#f3f3f3",luxury:"linear-gradient(135deg,#241c0e,#0a0805)"};
     return m[t]||"#222";
   }
@@ -47,7 +49,8 @@ const Settings = (() => {
     q("[data-theme-pick]",true).forEach(b=>b.onclick=()=>{Store.set({theme:b.dataset.themePick});render();});
     q("[data-accent]",true).forEach(b=>b.onclick=()=>{Store.set({accent:b.dataset.accent});render();});
     q("[data-font]",true).forEach(b=>b.onclick=()=>{Store.set({uiFont:b.dataset.font});render();});
-    q("[data-view]",true).forEach(b=>b.onclick=()=>{Store.set({bmView:b.dataset.view});Bookmarks.renderGrid();render();});
+    q("[data-view]",true).forEach(b=>b.onclick=()=>{Store.set({bmView:b.dataset.view});Bookmarks.renderAll();render();});
+    const sug=q("[data-suggest]"); if(sug) sug.onclick=()=>{Store.update(s=>s.suggest=!s.suggest);sug.classList.toggle("on");};
     q("[data-blur]").oninput=e=>{Store.set({glassBlur:+e.target.value});liveLabel(e,"px");};
     q("[data-alpha]").oninput=e=>{Store.set({cardAlpha:+e.target.value/100});liveLabel(e,"%",true);};
     q("[data-radius]").oninput=e=>{Store.set({radiusScale:+e.target.value/100});liveLabel(e,"%",true);};
@@ -59,10 +62,13 @@ const Settings = (() => {
     const s=Store.get(), b=s.background;
     return `
       <div class="field"><label>${I18N.t("bgMode")}</label>
-        <div class="seg"><button class="${b.mode==='gradient'?'active':''}" data-bgmode="gradient">${I18N.t("gradient")}</button><button class="${b.mode==='solid'?'active':''}" data-bgmode="solid">${I18N.t("solid")}</button><button class="${b.mode==='image'?'active':''}" data-bgmode="image">${I18N.t("image")}</button></div>
+        <div class="seg"><button class="${b.mode==='gradient'?'active':''}" data-bgmode="gradient">${I18N.t("gradient")}</button><button class="${b.mode==='animated'?'active':''}" data-bgmode="animated">${I18N.t("animated")}</button><button class="${b.mode==='solid'?'active':''}" data-bgmode="solid">${I18N.t("solid")}</button><button class="${b.mode==='image'?'active':''}" data-bgmode="image">${I18N.t("image")}</button></div>
       </div>
       <div class="field"><label>${I18N.t("gradient")}</label>
         <div class="grad-row">${Themes.GRADIENTS.map((g,i)=>`<button class="grad-chip ${b.gradient===i&&b.mode==='gradient'?'active':''}" data-grad="${i}" style="background:${g}"></button>`).join("")}</div>
+      </div>
+      <div class="field"><label>${I18N.t("animated")}</label>
+        <div class="seg">${Themes.ANIM.map(a=>`<button class="${b.anim===a&&b.mode==='animated'?'active':''}" data-anim="${a}">${I18N.t("anim"+a.charAt(0).toUpperCase()+a.slice(1))}</button>`).join("")}</div>
       </div>
       <div class="toggle-row"><span class="t-name">${I18N.t("dailyRotate")}</span><button class="switch ${b.daily?'on':''}" data-daily></button></div>
       <div class="field" style="margin-top:18px"><label>${I18N.t("image")}</label>
@@ -70,14 +76,17 @@ const Settings = (() => {
         <input type="file" id="bgFile" accept="image/*" hidden>
       </div>
       <div class="field"><label>${I18N.t("blur")} · ${b.blur}px</label><input type="range" class="slider" min="0" max="30" value="${b.blur}" data-bgblur></div>
-      <div class="field"><label>${I18N.t("brightness")} · ${Math.round(b.bright*100)}%</label><input type="range" class="slider" min="30" max="130" value="${b.bright*100}" data-bgbright></div>`;
+      <div class="field"><label>${I18N.t("brightness")} · ${Math.round(b.bright*100)}%</label><input type="range" class="slider" min="30" max="130" value="${b.bright*100}" data-bgbright></div>
+      <div class="field"><label>${I18N.t("saturation")} · ${Math.round((b.sat==null?1:b.sat)*100)}%</label><input type="range" class="slider" min="0" max="200" value="${(b.sat==null?1:b.sat)*100}" data-bgsat></div>`;
   }
   function wireBackground(){
     q("[data-bgmode]",true).forEach(b=>b.onclick=()=>{Store.update(s=>s.background.mode=b.dataset.bgmode);render();});
     q("[data-grad]",true).forEach(b=>b.onclick=()=>{Store.update(s=>{s.background.gradient=+b.dataset.grad;s.background.mode="gradient";s.background.daily=false;});render();});
+    q("[data-anim]",true).forEach(b=>b.onclick=()=>{Store.update(s=>{s.background.anim=b.dataset.anim;s.background.mode="animated";});render();});
     q("[data-daily]").onclick=e=>{Store.update(s=>s.background.daily=!s.background.daily);render();};
     q("[data-bgblur]").oninput=e=>{Store.update(s=>s.background.blur=+e.target.value);liveLabel(e,"px");};
     q("[data-bgbright]").oninput=e=>{Store.update(s=>s.background.bright=+e.target.value/100);liveLabel(e,"%",true);};
+    q("[data-bgsat]").oninput=e=>{Store.update(s=>s.background.sat=+e.target.value/100);liveLabel(e,"%",true);};
     const file=q("#bgFile");
     q("#bgUpload").onclick=()=>file.click();
     file.onchange=()=>{
@@ -92,7 +101,7 @@ const Settings = (() => {
   /* ---------- WIDGETS ---------- */
   function widgetsPanel(){
     const w=Store.get().widgets;
-    const labels={weather:"weather",prayer:"prayer",todo:"todo",notes:"notes",calendar:"calendar",pomodoro:"pomodoro",worldclock:"worldclock",crypto:"crypto",calculator:"calculator"};
+    const labels={weather:"weather",prayer:"prayer",todo:"todo",notes:"notes",calendar:"calendar",pomodoro:"pomodoro",worldclock:"worldclock",crypto:"crypto",stocks:"stocks",calculator:"calculator"};
     return Object.keys(labels).map(k=>`
       <div class="toggle-row"><span class="t-name">${I18N.t(labels[k])}</span><button class="switch ${w[k]?'on':''}" data-widget="${k}"></button></div>`).join("");
   }

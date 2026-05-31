@@ -17,6 +17,7 @@
   --card-alpha:1;
   --bg-blur:0px;
   --bg-bright:1;
+  --bg-sat:1;
   --bg-image:none;
   --radius-scale:1;
 
@@ -119,6 +120,31 @@
   --grad:radial-gradient(120% 120% at 20% 0%,#241c0e 0%,#120e07 55%,#0a0805 100%);
   --orb-1:#d4af5a; --orb-2:#8a6d2c; --orb-3:#e7d9a8;
   --glass-blur:16px; --on-accent:#15110a;
+}
+
+/* ---------- Midnight Blue ---------- */
+[data-theme="midnight"]{
+  --bg:#070d1f; --bg-2:#0c1530;
+  --fg:#e6ecff; --muted:#8a98c8;
+  --card:rgba(16,26,56,.66); --card-brd:rgba(110,150,255,.18);
+  --card-hover:rgba(24,38,76,.84);
+  --accent:#4d8dff; --accent-2:#6f6bff; --accent-3:#35c6e0;
+  --shadow:0 26px 60px -28px rgba(0,8,40,.9);
+  --grad:radial-gradient(120% 120% at 25% 0%,#10224d 0%,#0a1430 50%,#050a1c 100%);
+  --orb-1:#2f5cff; --orb-2:#5b6bff; --orb-3:#23a9d6;
+  --glass-blur:18px; --on-accent:#050a1c;
+}
+/* ---------- Vision Pro ---------- */
+[data-theme="vision"]{
+  --bg:#1a1d27; --bg-2:#242833;
+  --fg:#f4f6fc; --muted:#b6bccf;
+  --card:rgba(255,255,255,.1); --card-brd:rgba(255,255,255,.22);
+  --card-hover:rgba(255,255,255,.17);
+  --accent:#aab4ff; --accent-2:#ffc4e6; --accent-3:#a9f0e0;
+  --shadow:0 30px 70px -30px rgba(0,0,0,.55);
+  --grad:radial-gradient(130% 130% at 50% -10%,#34384a 0%,#20232f 55%,#15171f 100%);
+  --orb-1:#9aa6ff; --orb-2:#ffb0dd; --orb-3:#9bf0df;
+  --glass-blur:30px; --on-accent:#1a1d27;
 }
 
 /* accent override hook */

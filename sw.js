@@ -1,7 +1,7 @@
 /* ============================================================
    sw.js — offline app-shell caching
    ============================================================ */
-const CACHE = "lumen-v1";
+const CACHE = "lumen-v2";
 const SHELL = [
   "./", "./index.html", "./manifest.json",
   "./css/variables.css", "./css/base.css", "./css/components.css", "./css/animations.css",

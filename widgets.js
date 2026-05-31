@@ -13,7 +13,7 @@ const Widgets = (() => {
     clearTimers();
     host.innerHTML = "";
     const w = Store.get().widgets;
-    const order = ["weather","prayer","todo","notes","calendar","pomodoro","worldclock","crypto","calculator"];
+    const order = ["weather","prayer","todo","notes","calendar","pomodoro","worldclock","crypto","stocks","calculator"];
     order.forEach((k, i) => {
       if (!w[k]) return;
       const node = builders[k]();
@@ -203,6 +203,42 @@ const Widgets = (() => {
     }catch{ body.innerHTML=`<div class="crypto-row">${I18N.t("noData")}</div>`; }
   }
 
+  /* ---------------- STOCKS WATCHLIST ---------------- */
+  function buildStocks(){
+    const el=card("stocks", '<path d="M3 17l6-6 4 4 8-8M21 7v5h-5"/>',
+      `<div class="crypto-list" id="stkList"><div class="crypto-row skeleton">—</div></div>`,
+      `<button class="w-act" data-edit>${I18N.lang==="ar"?"تعديل":"Edit"}</button>`);
+    el.querySelector("[data-edit]").onclick=()=>{
+      const cur=Store.get().stockSymbols.join(", ");
+      const v=prompt(I18N.lang==="ar"?"الرموز (مفصولة بفاصلة):":"Symbols (comma separated):",cur);
+      if(v!=null){ const arr=v.split(",").map(x=>x.trim().toUpperCase()).filter(Boolean); Store.set({stockSymbols:arr}); render(); }
+    };
+    loadStocks(el);
+    return el;
+  }
+  async function loadStocks(el){
+    const body=el.querySelector("#stkList");
+    const syms=Store.get().stockSymbols;
+    if(!syms.length){ body.innerHTML=`<div class="crypto-row">${I18N.lang==="ar"?"أضف رموزاً":"Add symbols"}</div>`; return; }
+    const rows=await Promise.all(syms.map(async sym=>{
+      try{
+        const r=await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=1d`);
+        if(!r.ok) throw 0;
+        const j=await r.json();
+        const m=j.chart.result[0].meta;
+        const px=m.regularMarketPrice, prev=m.chartPreviousClose||m.previousClose||px;
+        const chg=prev?((px/prev-1)*100):0;
+        return `<div class="crypto-row"><span class="sym">${esc(sym)}</span><span class="chg ${chg>=0?'up':'down'}">${chg>=0?'▲':'▼'} ${Math.abs(chg).toFixed(2)}%</span><span class="px">${px.toLocaleString(undefined,{maximumFractionDigits:2})}</span></div>`;
+      }catch{
+        return `<a class="crypto-row" href="https://finance.yahoo.com/quote/${encodeURIComponent(sym)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="sym">${esc(sym)}</span><span class="chg" style="color:var(--muted)">${I18N.lang==="ar"?"عرض ↗":"view ↗"}</span><span class="px">—</span></a>`;
+      }
+    }));
+    body.innerHTML=rows.join("");
+    if(rows.every(r=>r.includes("view ↗")||r.includes("عرض ↗"))){
+      body.insertAdjacentHTML("beforeend",`<div class="wx-meta" style="margin-top:8px">${I18N.lang==="ar"?"تعذّر جلب الأسعار المباشرة هنا — اضغط الرمز للعرض":"Live prices blocked here — tap a symbol to view"}</div>`);
+    }
+  }
+
   /* ---------------- CALENDAR (Gregorian + Hijri month) ---------------- */
   function buildCalendar(){
     const now=new Date(), y=now.getFullYear(), mo=now.getMonth();
@@ -219,7 +255,7 @@ const Widgets = (() => {
   }
 
   const builders={ weather:buildWeather, prayer:buildPrayer, todo:buildTodo, notes:buildNotes,
-    pomodoro:buildPomodoro, calculator:buildCalc, worldclock:buildWorldClock, crypto:buildCrypto, calendar:buildCalendar };
+    pomodoro:buildPomodoro, calculator:buildCalc, worldclock:buildWorldClock, crypto:buildCrypto, stocks:buildStocks, calendar:buildCalendar };
 
   const esc=s=>String(s||"").replace(/</g,"&lt;").replace(/"/g,"&quot;");
   return { render };

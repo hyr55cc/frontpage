@@ -56,6 +56,28 @@ const Particles = (() => {
   return { init };
 })();
 
+/* ---------------- mouse glow + parallax ---------------- */
+const Glow = (() => {
+  function init(){
+    if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+    const glow=document.getElementById("bgGlow");
+    const orbs=[...document.querySelectorAll(".bg-orb")];
+    let raf, tx=innerWidth/2, ty=innerHeight/2, cx=tx, cy=ty;
+    addEventListener("pointermove", e=>{
+      tx=e.clientX; ty=e.clientY; glow.style.opacity=".8";
+      const ox=(e.clientX/innerWidth-.5), oy=(e.clientY/innerHeight-.5);
+      orbs.forEach((o,i)=>{ const m=(i+1)*14; o.style.transform=`translate(${ox*m}px,${oy*m}px)`; });
+    }, {passive:true});
+    addEventListener("pointerleave", ()=>glow.style.opacity="0");
+    (function follow(){
+      cx+=(tx-cx)*.12; cy+=(ty-cy)*.12;
+      glow.style.left=cx+"px"; glow.style.top=cy+"px";
+      raf=requestAnimationFrame(follow);
+    })();
+  }
+  return { init };
+})();
+
 /* ---------------- App ---------------- */
 const App = (() => {
   function applyState(s){
@@ -82,6 +104,7 @@ const App = (() => {
 
     Clock.start();
     Particles.init();
+    Glow.init();
     Search.render();
     Search.initHotkeys();
     Bookmarks.renderAll();

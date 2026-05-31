@@ -35,3 +35,19 @@
 .bm-card:hover::before,.widget:hover::before{ opacity:1; animation:sweep 1s var(--ease) forwards; }
 @keyframes sweep{ to{ background-position:-50% 0; } }
 [data-theme="minimal"] .bm-card::before,[data-theme="minimal"] .widget::before{ display:none; }
+
+/* ---------- animated background keyframes ---------- */
+@keyframes auroraShift{
+  0%{ background-position:0% 50%; }
+  50%{ background-position:100% 50%; }
+  100%{ background-position:0% 50%; }
+}
+@keyframes spaceDrift{
+  0%{ background-position:0% 0%, 0 0; }
+  50%{ background-position:100% 100%, 0 0; }
+  100%{ background-position:0% 0%, 0 0; }
+}
+@media (prefers-reduced-motion: reduce){
+  .bg-gradient[class*="anim-"]{ animation:none; }
+  .bg-glow{ display:none; }
+}

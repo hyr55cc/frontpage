@@ -2,8 +2,9 @@
    themes.js — theme switching, accent, fonts, background system
    ============================================================ */
 const Themes = (() => {
-  const LIST = ["aurora","light","dark","amoled","glass","cyber","minimal","luxury"];
-  const NAMES = { aurora:"Aurora", light:"Light", dark:"Dark", amoled:"AMOLED", glass:"Glass", cyber:"Cyber", minimal:"Minimal", luxury:"Luxury" };
+  const LIST  = ["aurora","light","dark","amoled","glass","cyber","midnight","vision","minimal","luxury"];
+  const NAMES = { aurora:"Aurora", light:"Light", dark:"Dark", amoled:"AMOLED", glass:"Glass",
+                  cyber:"Cyberpunk", midnight:"Midnight Blue", vision:"Vision Pro", minimal:"Minimal White", luxury:"Luxury Gold" };
   const ACCENTS = ["#7c9cff","#4f6bff","#00e0b8","#ff2ea6","#d4af5a","#ff7a45","#27d39a","#b06bff","#ff5fa8","#00f0ff"];
   const FONTS = { Manrope:"Manrope", Sora:"Sora", "IBM Plex Sans Arabic":"Plex Arabic", Bricolage:"Bricolage Grotesque" };
   const GRADIENTS = [
@@ -16,6 +17,8 @@ const Themes = (() => {
     "radial-gradient(120% 120% at 50% 0%,#11998e,#063d3a)",
     "linear-gradient(135deg,#ff6a88,#ff99ac 50%,#fcb69f)"
   ];
+  // animated background presets -> css class on #bgGradient
+  const ANIM = ["aurora","space","cyber","nature"];
 
   function applyTheme(name){
     document.documentElement.setAttribute("data-theme", name);
@@ -32,7 +35,6 @@ const Themes = (() => {
     const fontMap = { Manrope:'"Manrope",system-ui,sans-serif', Sora:'"Sora",system-ui,sans-serif',
       "IBM Plex Sans Arabic":'"IBM Plex Sans Arabic",system-ui,sans-serif', Bricolage:'"Bricolage Grotesque",system-ui,sans-serif' };
     root.setProperty("--font-ui", fontMap[s.uiFont] || fontMap.Manrope);
-    // scale radii
     const rs = s.radiusScale || 1;
     root.setProperty("--r-md", (20*rs)+"px");
     root.setProperty("--r-lg", (28*rs)+"px");
@@ -47,15 +49,23 @@ const Themes = (() => {
 
     root.setProperty("--bg-blur", (b.blur||0) + "px");
     root.setProperty("--bg-bright", b.bright || 1);
+    root.setProperty("--bg-sat", (b.sat==null?1:b.sat));
+
+    grad.className = "bg-layer bg-gradient";  // reset animated classes
 
     if (b.mode === "image" && b.image){
       img.style.backgroundImage = `url("${b.image}")`;
       img.style.opacity = "1";
       grad.style.opacity = ".25";
+      grad.style.background = "var(--grad)";
     } else {
       img.style.opacity = "0";
       grad.style.opacity = "1";
-      if (b.mode === "gradient"){
+      if (b.mode === "animated"){
+        const a = ANIM.includes(b.anim) ? b.anim : "aurora";
+        grad.className = "bg-layer bg-gradient anim-" + a;
+        grad.style.background = "";          // class drives it
+      } else if (b.mode === "gradient"){
         let idx = b.gradient || 0;
         if (b.daily){ idx = dayIndex() % GRADIENTS.length; }
         grad.style.background = GRADIENTS[idx] || "var(--grad)";
@@ -75,5 +85,5 @@ const Themes = (() => {
     UI.toast(NAMES[next]);
   }
 
-  return { LIST, NAMES, ACCENTS, FONTS, GRADIENTS, applyAll, applyTheme, applyBackground, cycle };
+  return { LIST, NAMES, ACCENTS, FONTS, GRADIENTS, ANIM, applyAll, applyTheme, applyBackground, cycle };
 })();

@@ -22,11 +22,13 @@ const I18N = (() => {
       engineName:"Engine name", engineUrl:"URL template (use %s for query)", engineColor:"Accent color",
       newEngine:"New search engine", editEngine:"Edit search engine",
       weather:"Weather", prayer:"Prayer times", todo:"To-do", notes:"Quick notes",
-      pomodoro:"Pomodoro", calculator:"Calculator", worldclock:"World clock", crypto:"Crypto", calendar:"Calendar",
+      pomodoro:"Pomodoro", calculator:"Calculator", worldclock:"World clock", crypto:"Crypto", stocks:"Stocks", calendar:"Calendar",
       addTask:"Add a task…", focus:"Focus", shortBreak:"Short break", longBreak:"Long break",
       start:"Start", pause:"Pause", reset2:"Reset", nextPrayer:"Next", saved:"Saved",
       enginesLabel:"Search engines", loading:"Loading…", noData:"Unavailable", today:"Today",
-      cityPrompt:"Set weather city", deleteConfirm:"Delete this?", imported:"Imported", importFail:"Invalid file"
+      cityPrompt:"Set weather city", deleteConfirm:"Delete this?", imported:"Imported", importFail:"Invalid file",
+      folder:"Folders", suggestions:"Search suggestions", saturation:"Saturation", animated:"Animated",
+      animAurora:"Aurora", animSpace:"Space", animCyber:"Cyber city", animNature:"Nature"
     },
     ar: {
       day:"اليوم", gregorian:"ميلادي", hijri:"هجري",
@@ -47,11 +49,13 @@ const I18N = (() => {
       engineName:"اسم المحرك", engineUrl:"قالب الرابط (استخدم %s للبحث)", engineColor:"اللون",
       newEngine:"محرك بحث جديد", editEngine:"تعديل محرك البحث",
       weather:"الطقس", prayer:"مواقيت الصلاة", todo:"المهام", notes:"ملاحظات سريعة",
-      pomodoro:"بومودورو", calculator:"الآلة الحاسبة", worldclock:"الساعة العالمية", crypto:"العملات الرقمية", calendar:"التقويم",
+      pomodoro:"بومودورو", calculator:"الآلة الحاسبة", worldclock:"الساعة العالمية", crypto:"العملات الرقمية", stocks:"الأسهم", calendar:"التقويم",
       addTask:"أضف مهمة…", focus:"تركيز", shortBreak:"راحة قصيرة", longBreak:"راحة طويلة",
       start:"ابدأ", pause:"إيقاف", reset2:"تصفير", nextPrayer:"التالية", saved:"تم الحفظ",
       enginesLabel:"محركات البحث", loading:"جارٍ التحميل…", noData:"غير متاح", today:"اليوم",
-      cityPrompt:"حدد مدينة الطقس", deleteConfirm:"حذف هذا العنصر؟", imported:"تم الاستيراد", importFail:"ملف غير صالح"
+      cityPrompt:"حدد مدينة الطقس", deleteConfirm:"حذف هذا العنصر؟", imported:"تم الاستيراد", importFail:"ملف غير صالح",
+      folder:"مجلدات", suggestions:"اقتراحات البحث", saturation:"التشبّع", animated:"متحرّكة",
+      animAurora:"شفق", animSpace:"فضاء", animCyber:"مدينة سايبر", animNature:"طبيعة"
     }
   };
   let lang = "en";

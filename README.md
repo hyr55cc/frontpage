@@ -15,7 +15,8 @@ Design language draws from Apple Vision Pro, Arc, Linear, Notion, and Raycast: g
 - Time-aware greeting
 
 **Search**
-- Separate boxes for Google, ChatGPT, and DeepSeek out of the box
+- Separate boxes for Google, ChatGPT, DeepSeek, Perplexity, YouTube, X, and Bing out of the box
+- Live search suggestions as you type (keyless), with arrow-key navigation
 - Add unlimited custom engines; edit, delete, reorder (drag & drop), and color them
 - Keyboard shortcuts: `/` focuses the first engine, `Alt+1…9` jumps to an engine, `Esc` closes overlays
 - Focus glow + entrance animations
@@ -24,22 +25,22 @@ Design language draws from Apple Vision Pro, Arc, Linear, Notion, and Raycast: g
 - Card-based, unlimited categories and links
 - Drag & drop reordering, pin/favorite (pinned float first)
 - Auto favicons with letter fallback
-- Grid and list view modes
+- Grid, list, and folder views (folder view shows every category at once)
 - Inline add / edit / delete, rename categories on double-click
+- Seeded folders: AI, Work, Media, Finance
 
 **Themes & personalization**
-- 8 themes: Aurora (signature default), Light, Dark, AMOLED, Glassmorphism, Cyberpunk, Minimal, Luxury
+- 10 themes: Aurora (signature default), Light, Dark, AMOLED, Glassmorphism, Cyberpunk, Midnight Blue, Vision Pro, Minimal White, Luxury Gold
 - Custom accent color, UI font, card transparency, corner radius, glass blur
 - Everything driven by CSS variables and persisted
 
 **Backgrounds**
-- Gradient presets, solid, or custom uploaded image (stored locally)
-- Daily rotating gradient
-- Blur and brightness controls
+- Gradient presets, animated presets (Aurora, Space, Cyber city, Nature), solid, or custom uploaded image
+- Daily rotation, blur, brightness, and saturation controls
 
 **Animations**
 - Interactive particle field (mouse-repulsion, linked nodes, accent-tinted)
-- Floating orbs, grain overlay, glass reflection sweeps, staggered entrance reveals
+- Mouse-follow glow + subtle orb parallax, floating orbs, grain overlay, glass reflections, staggered entrances
 - Fully respects `prefers-reduced-motion`
 
 **Widgets** (toggle each on/off)
@@ -47,7 +48,7 @@ Design language draws from Apple Vision Pro, Arc, Linear, Notion, and Raycast: g
 - Prayer times (Aladhan, Umm Al-Qura method)
 - To-do list, Quick notes, Pomodoro timer
 - Calendar (Gregorian grid + Hijri month label)
-- World clock, Cryptocurrency prices (CoinGecko), Quick calculator
+- World clock, Cryptocurrency prices (CoinGecko), Stock watchlist, Quick calculator
 
 **Technical**
 - Modular file structure, LocalStorage persistence
