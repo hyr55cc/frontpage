@@ -109,6 +109,7 @@ const App = (() => {
     Search.initHotkeys();
     Bookmarks.renderAll();
     Widgets.render();
+    Notify.start();
 
     // live re-apply theme/vars/background whenever state changes
     Store.subscribe(applyState);
@@ -128,8 +129,6 @@ const App = (() => {
     document.getElementById("scrim").onclick=UI.closeDrawer;
     document.getElementById("modalScrim").onclick=e=>{ if(e.target.id==="modalScrim") UI.closeModal(); };
     document.getElementById("modalClose").onclick=UI.closeModal;
-    document.getElementById("themeQuick").onclick=Themes.cycle;
-    document.getElementById("viewToggle").onclick=Bookmarks.toggleView;
     document.getElementById("addEngine").onclick=()=>Search.openEngineModal(null);
     document.getElementById("addCategory").onclick=Bookmarks.addCategory;
     document.getElementById("langToggle").onclick=()=>{

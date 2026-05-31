@@ -2,7 +2,7 @@
    storage.js — persistent state store (localStorage + pub/sub)
    ============================================================ */
 const Store = (() => {
-  const KEY = "lumen.v3";
+  const KEY = "lumen.v4";
 
   const DEFAULTS = {
     lang: "en",
@@ -50,6 +50,10 @@ const Store = (() => {
     ],
     todos: [],
     notes: "",
+    finnhubKey: "",
+    alertSound: "chime",
+    widgetOrder: ["weather","prayer","todo","notes","calendar","pomodoro","worldclock","crypto","stocks","calculator"],
+    widgetSize: {},
     widgets: {
       weather: true, prayer: true, todo: true, notes: true,
       pomodoro: true, calculator: false, worldclock: false,
@@ -94,7 +98,25 @@ const Store = (() => {
       try { state = deepMerge(structuredClone(DEFAULTS), JSON.parse(json)); persist(); emit(); return true; }
       catch { return false; }
     },
-    defaults: DEFAULTS
+    defaults: DEFAULTS,
+    /* cachedFetch: returns cached value instantly via onCache, then refreshes.
+       Cache stored in its own localStorage key, TTL in ms. */
+    async cachedFetch(key, url, ttl, onCache){
+      const ck = "lumen.cache." + key;
+      let cached = null;
+      try { cached = JSON.parse(localStorage.getItem(ck)); } catch {}
+      if (cached && onCache) { try { onCache(cached.data, true); } catch {} }
+      const fresh = cached && (Date.now() - cached.t < ttl);
+      if (fresh) return cached.data;
+      try {
+        const data = await fetch(url).then(r => { if(!r.ok) throw 0; return r.json(); });
+        try { localStorage.setItem(ck, JSON.stringify({ t: Date.now(), data })); } catch {}
+        return data;
+      } catch (e) {
+        if (cached) return cached.data;   // fall back to stale cache
+        throw e;
+      }
+    }
   };
   function emit(){ subs.forEach(fn => fn(state)); }
 })();

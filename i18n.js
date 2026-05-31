@@ -28,7 +28,9 @@ const I18N = (() => {
       enginesLabel:"Search engines", loading:"Loading…", noData:"Unavailable", today:"Today",
       cityPrompt:"Set weather city", deleteConfirm:"Delete this?", imported:"Imported", importFail:"Invalid file",
       folder:"Folders", suggestions:"Search suggestions", saturation:"Saturation", animated:"Animated",
-      animAurora:"Aurora", animSpace:"Space", animCyber:"Cyber city", animNature:"Nature"
+      animAurora:"Aurora", animSpace:"Space", animCyber:"Cyber city", animNature:"Nature",
+      alertSound:"Reminder sound", finnhubKey:"Finnhub API key (free)", finnhubHint:"For live US stock prices",
+      testSound:"Test", reminders:"Task reminders", widgetSize:"Widget size", reorderHint:"Drag the ⋮ handle to reorder widgets"
     },
     ar: {
       day:"اليوم", gregorian:"ميلادي", hijri:"هجري",
@@ -55,7 +57,9 @@ const I18N = (() => {
       enginesLabel:"محركات البحث", loading:"جارٍ التحميل…", noData:"غير متاح", today:"اليوم",
       cityPrompt:"حدد مدينة الطقس", deleteConfirm:"حذف هذا العنصر؟", imported:"تم الاستيراد", importFail:"ملف غير صالح",
       folder:"مجلدات", suggestions:"اقتراحات البحث", saturation:"التشبّع", animated:"متحرّكة",
-      animAurora:"شفق", animSpace:"فضاء", animCyber:"مدينة سايبر", animNature:"طبيعة"
+      animAurora:"شفق", animSpace:"فضاء", animCyber:"مدينة سايبر", animNature:"طبيعة",
+      alertSound:"صوت التذكير", finnhubKey:"مفتاح Finnhub (مجاني)", finnhubHint:"لأسعار الأسهم الأمريكية الحيّة",
+      testSound:"تجربة", reminders:"تذكيرات المهام", widgetSize:"حجم الأداة", reorderHint:"اسحب المقبض ⋮ لإعادة ترتيب الأدوات"
     }
   };
   let lang = "en";

@@ -1,11 +1,11 @@
 /* ============================================================
    sw.js — offline app-shell caching
    ============================================================ */
-const CACHE = "frontpage-v3";
+const CACHE = "frontpage-v4";
 const SHELL = [
   "./", "./index.html", "./manifest.json",
   "./css/variables.css", "./css/base.css", "./css/components.css", "./css/animations.css",
-  "./js/storage.js", "./js/i18n.js", "./js/clock.js", "./js/themes.js", "./js/search.js",
+  "./js/storage.js", "./js/i18n.js", "./js/clock.js", "./js/notify.js", "./js/themes.js", "./js/search.js",
   "./js/bookmarks.js", "./js/widgets.js", "./js/settings.js", "./js/app.js",
   "./icons/icon.svg"
 ];

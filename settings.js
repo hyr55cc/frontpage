@@ -102,14 +102,25 @@ const Settings = (() => {
   function widgetsPanel(){
     const s=Store.get(); const w=s.widgets;
     const labels={weather:"weather",prayer:"prayer",todo:"todo",notes:"notes",calendar:"calendar",pomodoro:"pomodoro",worldclock:"worldclock",crypto:"crypto",stocks:"stocks",calculator:"calculator"};
-    let html = Object.keys(labels).map(k=>`
+    let html = `<p class="hint" style="margin-bottom:12px">${I18N.t("reorderHint")}</p>`;
+    html += Object.keys(labels).map(k=>`
       <div class="toggle-row"><span class="t-name">${I18N.t(labels[k])}</span><button class="switch ${w[k]?'on':''}" data-widget="${k}"></button></div>`).join("");
+    if (w.todo){
+      html += `
+      <div class="field" style="margin-top:14px"><label>🔔 ${I18N.t("alertSound")}</label>
+        <div class="seg sound-seg">${Notify.SOUNDS.map(snd=>`<button class="${s.alertSound===snd?'active':''}" data-sound="${snd}">${snd}</button>`).join("")}</div>
+        <button class="btn btn-soft" id="soundTest" style="margin-top:8px">▶ ${I18N.t("testSound")}</button>
+      </div>`;
+    }
     if (w.stocks){
       html += `
       <div class="field" style="margin-top:14px"><label>🇺🇸 ${I18N.lang==='ar'?'رموز أمريكية (مفصولة بفاصلة)':'US symbols (comma separated)'}</label>
         <input id="usSyms" value="${s.stockSymbols.join(', ')}" placeholder="AAPL, MSFT, NVDA"></div>
       <div class="field"><label>🇸🇦 ${I18N.lang==='ar'?'أرقام أسهم سعودية (مثل 2222)':'Saudi codes (e.g. 2222)'}</label>
-        <input id="saSyms" value="${s.saudiSymbols.join(', ')}" placeholder="2222, 1120, 7010"></div>`;
+        <input id="saSyms" value="${s.saudiSymbols.join(', ')}" placeholder="2222, 1120, 7010"></div>
+      <div class="field"><label>🔑 ${I18N.t("finnhubKey")}</label>
+        <input id="fhKey" value="${esc(s.finnhubKey||'')}" placeholder="d0xxxx..." autocomplete="off">
+        <p class="hint" style="margin-top:6px">${I18N.t("finnhubHint")} · <a href="https://finnhub.io/register" target="_blank" rel="noopener" style="color:var(--accent)">finnhub.io/register ↗</a></p></div>`;
     }
     return html;
   }
@@ -118,14 +129,21 @@ const Settings = (() => {
       const k=b.dataset.widget;
       Store.update(s=>s.widgets[k]=!s.widgets[k]);
       b.classList.toggle("on"); Widgets.render();
-      if(k==="stocks") render(); // show/hide symbol editors
+      if(k==="stocks"||k==="todo") render(); // show/hide extra fields
     });
+    q("[data-sound]",true).forEach(b=>b.onclick=()=>{
+      Store.set({alertSound:b.dataset.sound});
+      q("[data-sound]",true).forEach(x=>x.classList.toggle("active",x===b));
+      Notify.play(b.dataset.sound);
+    });
+    const st=q("#soundTest"); if(st) st.onclick=()=>Notify.play(Store.get().alertSound);
     const us=q("#usSyms"); if(us) us.onchange=()=>{
       Store.set({stockSymbols: us.value.split(",").map(x=>x.trim().toUpperCase()).filter(Boolean)}); Widgets.render();
     };
     const sa=q("#saSyms"); if(sa) sa.onchange=()=>{
       Store.set({saudiSymbols: sa.value.split(",").map(x=>x.trim()).filter(Boolean)}); Widgets.render();
     };
+    const fh=q("#fhKey"); if(fh) fh.onchange=()=>{ Store.set({finnhubKey:fh.value.trim()}); Widgets.render(); };
   }
 
   /* ---------- DATA ---------- */
@@ -153,5 +171,6 @@ const Settings = (() => {
   }
 
   const q=(sel,all)=> all ? Array.from(body.querySelectorAll(sel)) : body.querySelector(sel);
+  const esc = s => String(s||"").replace(/"/g,"&quot;").replace(/</g,"&lt;");
   return { open, setTab, render };
 })();

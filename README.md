@@ -1,4 +1,4 @@
-# FrontPage — Premium Browser Start Page
+# Lumen — Premium Browser Start Page
 
 A polished, futuristic new-tab / start-page dashboard built in **pure HTML, CSS, and vanilla JavaScript**. No build step, no frameworks, no API keys. Drop it on any static host and it runs.
 
@@ -76,7 +76,7 @@ No account, no API key, no server. If you are offline these widgets simply show 
 Because of the service worker and `fetch` calls, open it through a local server (not `file://`):
 
 ```bash
-cd frontpage
+cd lumen
 python3 -m http.server 8080
 # visit http://localhost:8080
 ```
@@ -85,7 +85,7 @@ python3 -m http.server 8080
 
 1. Create a repository and push the contents of this folder to it.
 2. In the repo: **Settings → Pages → Build and deploy → Source: Deploy from a branch**, pick `main` and `/ (root)`.
-3. Open the published URL. All paths are relative, so it works from a project subpath (e.g. `username.github.io/frontpage/`).
+3. Open the published URL. All paths are relative, so it works from a project subpath (e.g. `username.github.io/lumen/`).
 
 The service worker registers only over HTTPS or localhost — both of which GitHub Pages provides.
 
@@ -94,7 +94,7 @@ The service worker registers only over HTTPS or localhost — both of which GitH
 ## Project structure
 
 ```
-frontpage/
+lumen/
 ├── index.html            App shell
 ├── manifest.json         PWA manifest
 ├── sw.js                 Service worker (offline cache)

@@ -186,7 +186,10 @@ html[dir="rtl"] .bm-grid.list .bm-card{ text-align:right; }
 .bm-empty{ color:var(--muted); text-align:center; padding:30px; font-size:.9rem; grid-column:1/-1; }
 
 /* ---------------- WIDGETS ---------------- */
-.widgets{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:var(--gap); align-items:start; }
+.widgets{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:var(--gap); align-items:start; }
+.widget.size-sm{ grid-column:span 1; }
+.widget.size-md{ grid-column:span 2; }
+.widget.size-lg{ grid-column:span 4; }
 .widget{
   border-radius:var(--r-md); padding:18px;
   background:color-mix(in srgb,var(--card) calc(var(--card-alpha)*100%),transparent);
@@ -369,7 +372,9 @@ html[dir="rtl"] .switch.on::after{ right:23px; }
 @media (max-width:560px){
   .engine{ flex:1 1 100%; max-width:100%; }
   .theme-row{ grid-template-columns:repeat(3,1fr); }
-  .widgets{ grid-template-columns:1fr; }
+  .widgets{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .widget.size-sm{ grid-column:span 1; }
+  .widget.size-md, .widget.size-lg{ grid-column:span 2; }
   .bm-grid{ grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); }
 }
 
@@ -418,3 +423,20 @@ html[dir="rtl"] .engine-sug .sug-row{ text-align:right; }
 .stk-chg{ font-size:.74rem; font-weight:700; }
 .stk-chg.up{ color:#27d39a; } .stk-chg.down{ color:#ff6b85; }
 .stk-go{ font-size:.78rem; color:var(--accent); font-weight:600; }
+
+/* ---------- widget tools (resize + drag) ---------- */
+.w-tools{ display:flex; align-items:center; gap:2px; opacity:0; transition:opacity .2s var(--ease); }
+.widget:hover .w-tools{ opacity:1; }
+.w-tools button{ width:26px; height:26px; display:grid; place-items:center; border:none; background:none; color:var(--muted); border-radius:8px; cursor:pointer; }
+.w-tools button:hover{ background:color-mix(in srgb,var(--accent) 16%,transparent); color:var(--accent); }
+.w-drag{ cursor:grab; touch-action:none; }
+.widget.w-dragging{ opacity:.45; transform:scale(.97); }
+.widget.w-over{ outline:2px dashed var(--accent); outline-offset:3px; }
+@media (hover:none){ .w-tools{ opacity:1; } }
+
+/* ---------- todo reminder controls ---------- */
+.todo-remind{
+  border:1px solid var(--card-brd); background:color-mix(in srgb,var(--card) 60%,transparent);
+  color:var(--fg); border-radius:11px; padding:0 8px; font:inherit; font-size:.8rem; cursor:pointer; max-width:34%;
+}
+.todo-bell{ font-size:.72rem; color:var(--accent); font-style:normal; margin-inline-start:6px; white-space:nowrap; }
