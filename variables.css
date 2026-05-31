@@ -2,9 +2,9 @@
    variables.css — design tokens + theme palettes
    ============================================================ */
 :root{
-  --font-display:"Bricolage Grotesque", system-ui, sans-serif;
-  --font-ui:"Manrope", system-ui, sans-serif;
-  --font-mono:"JetBrains Mono", ui-monospace, monospace;
+  --font-display:"Sora", system-ui, sans-serif;
+  --font-ui:"Sora", system-ui, sans-serif;
+  --font-mono:ui-monospace, "SF Mono", Menlo, monospace;
   --font-ar:"IBM Plex Sans Arabic", system-ui, sans-serif;
 
   --r-xs:10px; --r-sm:14px; --r-md:20px; --r-lg:28px; --r-xl:36px;

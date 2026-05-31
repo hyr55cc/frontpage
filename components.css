@@ -290,6 +290,7 @@ html[dir="rtl"] .crypto-row .px{ margin-left:0; margin-right:auto; }
 }
 html[dir="rtl"] .drawer{ right:auto; left:0; border-left:none; border-right:1px solid var(--card-brd); transform:translateX(-105%); box-shadow:30px 0 80px -40px rgba(0,0,0,.7); }
 .drawer.open{ transform:translateX(0); }
+html[dir="rtl"] .drawer.open{ transform:translateX(0); }
 .drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:20px 22px 14px; }
 .drawer-head h3{ font-family:var(--font-display); font-size:1.3rem; }
 .drawer-tabs{ display:flex; gap:4px; padding:0 18px 12px; flex-wrap:wrap; }
@@ -398,3 +399,22 @@ html[dir="rtl"] .engine-sug .sug-row{ text-align:right; }
   background:color-mix(in srgb,var(--card) 80%,transparent); border:1px solid var(--card-brd);
   padding:3px 8px; border-radius:999px;
 }
+
+/* ---------- stocks widget ---------- */
+.stk-group{ margin-bottom:14px; }
+.stk-group:last-child{ margin-bottom:0; }
+.stk-label{ font-size:.74rem; font-weight:700; color:var(--muted); margin:0 2px 8px; letter-spacing:.02em; }
+.stk-boxes{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+.stk-box{
+  display:flex; flex-direction:column; gap:3px; padding:10px 12px; border-radius:13px;
+  background:color-mix(in srgb,var(--card) 50%,transparent); border:1px solid var(--card-brd);
+  text-decoration:none; color:var(--fg); transition:transform .18s var(--ease), background .18s var(--ease);
+}
+.stk-box.link:hover{ transform:translateY(-2px); background:color-mix(in srgb,var(--accent) 14%,transparent); }
+.stk-box.muted{ color:var(--muted); align-items:center; }
+.stk-sym{ font-weight:700; font-size:.92rem; }
+.stk-code{ font-size:.72rem; color:var(--muted); font-family:var(--font-mono); }
+.stk-px{ font-family:var(--font-mono); font-weight:600; font-size:1.02rem; }
+.stk-chg{ font-size:.74rem; font-weight:700; }
+.stk-chg.up{ color:#27d39a; } .stk-chg.down{ color:#ff6b85; }
+.stk-go{ font-size:.78rem; color:var(--accent); font-weight:600; }

@@ -1,6 +1,6 @@
 {
-  "name": "Lumen Start Page",
-  "short_name": "Lumen",
+  "name": "FrontPage",
+  "short_name": "FrontPage",
   "description": "A premium, customizable browser start page with multi-search, smart bookmarks, widgets and themes.",
   "start_url": "./index.html",
   "scope": "./",

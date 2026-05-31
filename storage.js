@@ -2,13 +2,13 @@
    storage.js — persistent state store (localStorage + pub/sub)
    ============================================================ */
 const Store = (() => {
-  const KEY = "lumen.v2";
+  const KEY = "lumen.v3";
 
   const DEFAULTS = {
     lang: "en",
     theme: "aurora",
     accent: "",                  // "" = theme default
-    uiFont: "Manrope",
+    uiFont: "Sora",
     glassBlur: 20,
     cardAlpha: 1,
     radiusScale: 1,
@@ -58,7 +58,8 @@ const Store = (() => {
     weatherCity: "Jeddah",
     worldClocks: ["Asia/Riyadh", "Europe/London", "America/New_York", "Asia/Tokyo"],
     cryptoCoins: ["bitcoin", "ethereum", "solana"],
-    stockSymbols: ["AAPL", "MSFT", "NVDA", "TSLA"]
+    stockSymbols: ["AAPL", "MSFT", "NVDA", "TSLA"],
+    saudiSymbols: ["2222", "1120", "7010", "2010"]
   };
 
   let state = load();

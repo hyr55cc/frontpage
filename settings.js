@@ -4,7 +4,7 @@
 const Settings = (() => {
   let body, current = "appearance";
 
-  function open(tab){ if (tab) current = tab; render(); UI.openDrawer(); }
+  function open(tab){ if (tab){ current = tab; document.querySelectorAll("#drawerTabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab)); } render(); UI.openDrawer(); }
   function setTab(tab){ current = tab; document.querySelectorAll("#drawerTabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab)); render(); }
 
   function render(){
@@ -100,17 +100,32 @@ const Settings = (() => {
 
   /* ---------- WIDGETS ---------- */
   function widgetsPanel(){
-    const w=Store.get().widgets;
+    const s=Store.get(); const w=s.widgets;
     const labels={weather:"weather",prayer:"prayer",todo:"todo",notes:"notes",calendar:"calendar",pomodoro:"pomodoro",worldclock:"worldclock",crypto:"crypto",stocks:"stocks",calculator:"calculator"};
-    return Object.keys(labels).map(k=>`
+    let html = Object.keys(labels).map(k=>`
       <div class="toggle-row"><span class="t-name">${I18N.t(labels[k])}</span><button class="switch ${w[k]?'on':''}" data-widget="${k}"></button></div>`).join("");
+    if (w.stocks){
+      html += `
+      <div class="field" style="margin-top:14px"><label>🇺🇸 ${I18N.lang==='ar'?'رموز أمريكية (مفصولة بفاصلة)':'US symbols (comma separated)'}</label>
+        <input id="usSyms" value="${s.stockSymbols.join(', ')}" placeholder="AAPL, MSFT, NVDA"></div>
+      <div class="field"><label>🇸🇦 ${I18N.lang==='ar'?'أرقام أسهم سعودية (مثل 2222)':'Saudi codes (e.g. 2222)'}</label>
+        <input id="saSyms" value="${s.saudiSymbols.join(', ')}" placeholder="2222, 1120, 7010"></div>`;
+    }
+    return html;
   }
   function wireWidgets(){
     q("[data-widget]",true).forEach(b=>b.onclick=()=>{
       const k=b.dataset.widget;
       Store.update(s=>s.widgets[k]=!s.widgets[k]);
       b.classList.toggle("on"); Widgets.render();
+      if(k==="stocks") render(); // show/hide symbol editors
     });
+    const us=q("#usSyms"); if(us) us.onchange=()=>{
+      Store.set({stockSymbols: us.value.split(",").map(x=>x.trim().toUpperCase()).filter(Boolean)}); Widgets.render();
+    };
+    const sa=q("#saSyms"); if(sa) sa.onchange=()=>{
+      Store.set({saudiSymbols: sa.value.split(",").map(x=>x.trim()).filter(Boolean)}); Widgets.render();
+    };
   }
 
   /* ---------- DATA ---------- */

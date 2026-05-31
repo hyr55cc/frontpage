@@ -29,7 +29,7 @@ const Bookmarks = (() => {
   function buildCard(it, realIdx, catIdx, listMode){
     const card = document.createElement("a");
     card.className = "bm-card";
-    card.href = it.url; card.draggable = true; card.dataset.idx = realIdx;
+    card.href = it.url; card.target = "_blank"; card.rel = "noopener"; card.draggable = true; card.dataset.idx = realIdx;
     const fav = favicon(it.url);
     const letter = (it.title||"?")[0].toUpperCase();
     card.innerHTML = `

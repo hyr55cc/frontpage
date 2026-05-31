@@ -203,40 +203,46 @@ const Widgets = (() => {
     }catch{ body.innerHTML=`<div class="crypto-row">${I18N.t("noData")}</div>`; }
   }
 
-  /* ---------------- STOCKS WATCHLIST ---------------- */
+  /* ---------------- STOCKS WATCHLIST (US live + Saudi links) ---------------- */
+  const SAUDI_NAMES = { "2222":"أرامكو", "1120":"الراجحي", "7010":"STC", "2010":"سابك",
+    "1010":"الرياض", "1180":"الأهلي", "2350":"كيان", "4002":"المواساة", "1211":"معادن", "4030":"البحري" };
   function buildStocks(){
     const el=card("stocks", '<path d="M3 17l6-6 4 4 8-8M21 7v5h-5"/>',
-      `<div class="crypto-list" id="stkList"><div class="crypto-row skeleton">—</div></div>`,
+      `<div class="stk-group"><div class="stk-label">🇺🇸 ${I18N.lang==="ar"?"السوق الأمريكي":"US Market"}</div><div class="stk-boxes" id="stkUS"><div class="stk-box skeleton">—</div></div></div>
+       <div class="stk-group"><div class="stk-label">🇸🇦 ${I18N.lang==="ar"?"السوق السعودي":"Saudi (Tadawul)"}</div><div class="stk-boxes" id="stkSA"></div></div>`,
       `<button class="w-act" data-edit>${I18N.lang==="ar"?"تعديل":"Edit"}</button>`);
-    el.querySelector("[data-edit]").onclick=()=>{
-      const cur=Store.get().stockSymbols.join(", ");
-      const v=prompt(I18N.lang==="ar"?"الرموز (مفصولة بفاصلة):":"Symbols (comma separated):",cur);
-      if(v!=null){ const arr=v.split(",").map(x=>x.trim().toUpperCase()).filter(Boolean); Store.set({stockSymbols:arr}); render(); }
-    };
-    loadStocks(el);
+    el.querySelector("[data-edit]").onclick=()=>Settings.open("widgets");
+    loadStocksUS(el);
+    renderSaudi(el);
     return el;
   }
-  async function loadStocks(el){
-    const body=el.querySelector("#stkList");
+  function renderSaudi(el){
+    const box=el.querySelector("#stkSA");
+    const syms=Store.get().saudiSymbols;
+    if(!syms.length){ box.innerHTML=`<div class="stk-box muted">${I18N.lang==="ar"?"لا رموز":"None"}</div>`; return; }
+    box.innerHTML=syms.map(code=>{
+      const nm=SAUDI_NAMES[code]||code;
+      return `<a class="stk-box link" href="https://www.tradingview.com/symbols/TADAWUL-${encodeURIComponent(code)}/" target="_blank" rel="noopener">
+        <span class="stk-sym">${esc(nm)}</span><span class="stk-code">${esc(code)}</span><span class="stk-go">↗</span></a>`;
+    }).join("");
+  }
+  async function loadStocksUS(el){
+    const box=el.querySelector("#stkUS");
     const syms=Store.get().stockSymbols;
-    if(!syms.length){ body.innerHTML=`<div class="crypto-row">${I18N.lang==="ar"?"أضف رموزاً":"Add symbols"}</div>`; return; }
+    if(!syms.length){ box.innerHTML=`<div class="stk-box muted">${I18N.lang==="ar"?"لا رموز":"None"}</div>`; return; }
     const rows=await Promise.all(syms.map(async sym=>{
       try{
         const r=await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=1d`);
         if(!r.ok) throw 0;
-        const j=await r.json();
-        const m=j.chart.result[0].meta;
+        const m=(await r.json()).chart.result[0].meta;
         const px=m.regularMarketPrice, prev=m.chartPreviousClose||m.previousClose||px;
         const chg=prev?((px/prev-1)*100):0;
-        return `<div class="crypto-row"><span class="sym">${esc(sym)}</span><span class="chg ${chg>=0?'up':'down'}">${chg>=0?'▲':'▼'} ${Math.abs(chg).toFixed(2)}%</span><span class="px">${px.toLocaleString(undefined,{maximumFractionDigits:2})}</span></div>`;
+        return `<div class="stk-box"><span class="stk-sym">${esc(sym)}</span><span class="stk-px">${px.toLocaleString(undefined,{maximumFractionDigits:2})}</span><span class="stk-chg ${chg>=0?'up':'down'}">${chg>=0?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</span></div>`;
       }catch{
-        return `<a class="crypto-row" href="https://finance.yahoo.com/quote/${encodeURIComponent(sym)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="sym">${esc(sym)}</span><span class="chg" style="color:var(--muted)">${I18N.lang==="ar"?"عرض ↗":"view ↗"}</span><span class="px">—</span></a>`;
+        return `<a class="stk-box link" href="https://finance.yahoo.com/quote/${encodeURIComponent(sym)}" target="_blank" rel="noopener"><span class="stk-sym">${esc(sym)}</span><span class="stk-go">${I18N.lang==="ar"?"عرض ↗":"view ↗"}</span></a>`;
       }
     }));
-    body.innerHTML=rows.join("");
-    if(rows.every(r=>r.includes("view ↗")||r.includes("عرض ↗"))){
-      body.insertAdjacentHTML("beforeend",`<div class="wx-meta" style="margin-top:8px">${I18N.lang==="ar"?"تعذّر جلب الأسعار المباشرة هنا — اضغط الرمز للعرض":"Live prices blocked here — tap a symbol to view"}</div>`);
-    }
+    box.innerHTML=rows.join("");
   }
 
   /* ---------------- CALENDAR (Gregorian + Hijri month) ---------------- */

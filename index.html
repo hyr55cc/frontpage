@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="description" content="Lumen — a premium, customizable browser start page with multi-search, smart bookmarks, widgets and themes." />
+  <meta name="description" content="FrontPage — a premium, customizable browser start page with multi-search, smart bookmarks, widgets and themes." />
   <meta name="theme-color" content="#0a0a0f" />
-  <title>Lumen · Start Page</title>
+  <title>FrontPage · Start Page</title>
 
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Sora:wght@400;600;700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
-/* ===== css/variables.css ===== */
+/* css/variables.css */
 /* ============================================================
    variables.css — design tokens + theme palettes
    ============================================================ */
 :root{
-  --font-display:"Bricolage Grotesque", system-ui, sans-serif;
-  --font-ui:"Manrope", system-ui, sans-serif;
-  --font-mono:"JetBrains Mono", ui-monospace, monospace;
+  --font-display:"Sora", system-ui, sans-serif;
+  --font-ui:"Sora", system-ui, sans-serif;
+  --font-mono:ui-monospace, "SF Mono", Menlo, monospace;
   --font-ar:"IBM Plex Sans Arabic", system-ui, sans-serif;
 
   --r-xs:10px; --r-sm:14px; --r-md:20px; --r-lg:28px; --r-xl:36px;
@@ -166,7 +166,7 @@
 /* accent override hook */
 :root[style*="--user-accent"] [data-accent-target]{ }
 
-/* ===== css/base.css ===== */
+/* css/base.css */
 /* ============================================================
    base.css — reset, layout shell, background system
    ============================================================ */
@@ -298,7 +298,7 @@ kbd{
   .bg-orb{ animation:none; }
 }
 
-/* ===== css/components.css ===== */
+/* css/components.css */
 /* ============================================================
    components.css — hero, search, bookmarks, widgets, drawer, modal
    ============================================================ */
@@ -591,6 +591,7 @@ html[dir="rtl"] .crypto-row .px{ margin-left:0; margin-right:auto; }
 }
 html[dir="rtl"] .drawer{ right:auto; left:0; border-left:none; border-right:1px solid var(--card-brd); transform:translateX(-105%); box-shadow:30px 0 80px -40px rgba(0,0,0,.7); }
 .drawer.open{ transform:translateX(0); }
+html[dir="rtl"] .drawer.open{ transform:translateX(0); }
 .drawer-head{ display:flex; align-items:center; justify-content:space-between; padding:20px 22px 14px; }
 .drawer-head h3{ font-family:var(--font-display); font-size:1.3rem; }
 .drawer-tabs{ display:flex; gap:4px; padding:0 18px 12px; flex-wrap:wrap; }
@@ -700,7 +701,26 @@ html[dir="rtl"] .engine-sug .sug-row{ text-align:right; }
   padding:3px 8px; border-radius:999px;
 }
 
-/* ===== css/animations.css ===== */
+/* ---------- stocks widget ---------- */
+.stk-group{ margin-bottom:14px; }
+.stk-group:last-child{ margin-bottom:0; }
+.stk-label{ font-size:.74rem; font-weight:700; color:var(--muted); margin:0 2px 8px; letter-spacing:.02em; }
+.stk-boxes{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; }
+.stk-box{
+  display:flex; flex-direction:column; gap:3px; padding:10px 12px; border-radius:13px;
+  background:color-mix(in srgb,var(--card) 50%,transparent); border:1px solid var(--card-brd);
+  text-decoration:none; color:var(--fg); transition:transform .18s var(--ease), background .18s var(--ease);
+}
+.stk-box.link:hover{ transform:translateY(-2px); background:color-mix(in srgb,var(--accent) 14%,transparent); }
+.stk-box.muted{ color:var(--muted); align-items:center; }
+.stk-sym{ font-weight:700; font-size:.92rem; }
+.stk-code{ font-size:.72rem; color:var(--muted); font-family:var(--font-mono); }
+.stk-px{ font-family:var(--font-mono); font-weight:600; font-size:1.02rem; }
+.stk-chg{ font-size:.74rem; font-weight:700; }
+.stk-chg.up{ color:#27d39a; } .stk-chg.down{ color:#ff6b85; }
+.stk-go{ font-size:.78rem; color:var(--accent); font-weight:600; }
+
+/* css/animations.css */
 /* ============================================================
    animations.css — keyframes, entrance reveals, micro-interactions
    ============================================================ */
@@ -773,14 +793,14 @@ html[dir="rtl"] .engine-sug .sug-row{ text-align:right; }
   <!-- ===== Boot / loading ===== -->
   <div id="boot" class="boot">
     <div class="boot-mark"><span></span><span></span><span></span></div>
-    <p class="boot-text">Lumen</p>
+    <p class="boot-text">FrontPage</p>
   </div>
 
   <!-- ===== Top bar ===== -->
   <header class="topbar" id="topbar">
     <div class="brand">
       <div class="brand-glyph"></div>
-      <span class="brand-name">Lumen</span>
+      <span class="brand-name">FrontPage</span>
     </div>
     <div class="topbar-actions">
       <button class="icon-btn" id="langToggle" title="Language" aria-label="Toggle language"><span id="langLabel">عربي</span></button>
@@ -837,7 +857,7 @@ html[dir="rtl"] .engine-sug .sug-row{ text-align:right; }
     <section class="widgets reveal" id="widgets" style="--d:.15s"></section>
 
     <footer class="foot">
-      <span>Lumen Start Page</span>
+      <span>FrontPage</span>
       <span class="dot">·</span>
       <span data-i18n="footHint">Your data stays in this browser</span>
     </footer>
@@ -870,18 +890,18 @@ html[dir="rtl"] .engine-sug .sug-row{ text-align:right; }
   <div class="toast" id="toast"></div>
 
   <script>
-/* ===== js/storage.js ===== */
+/* js/storage.js */
 /* ============================================================
    storage.js — persistent state store (localStorage + pub/sub)
    ============================================================ */
 const Store = (() => {
-  const KEY = "lumen.v2";
+  const KEY = "lumen.v3";
 
   const DEFAULTS = {
     lang: "en",
     theme: "aurora",
     accent: "",                  // "" = theme default
-    uiFont: "Manrope",
+    uiFont: "Sora",
     glassBlur: 20,
     cardAlpha: 1,
     radiusScale: 1,
@@ -931,7 +951,8 @@ const Store = (() => {
     weatherCity: "Jeddah",
     worldClocks: ["Asia/Riyadh", "Europe/London", "America/New_York", "Asia/Tokyo"],
     cryptoCoins: ["bitcoin", "ethereum", "solana"],
-    stockSymbols: ["AAPL", "MSFT", "NVDA", "TSLA"]
+    stockSymbols: ["AAPL", "MSFT", "NVDA", "TSLA"],
+    saudiSymbols: ["2222", "1120", "7010", "2010"]
   };
 
   let state = load();
@@ -971,7 +992,7 @@ const Store = (() => {
   function emit(){ subs.forEach(fn => fn(state)); }
 })();
 
-/* ===== js/i18n.js ===== */
+/* js/i18n.js */
 /* ============================================================
    i18n.js — English / Arabic strings + RTL handling
    ============================================================ */
@@ -1050,7 +1071,7 @@ const I18N = (() => {
   return { t, apply, get lang(){ return lang; } };
 })();
 
-/* ===== js/clock.js ===== */
+/* js/clock.js */
 /* ============================================================
    clock.js — live time, Gregorian + Hijri (Umm Al-Qura), greeting
    ============================================================ */
@@ -1114,7 +1135,7 @@ const Clock = (() => {
   return { start, refresh: tick };
 })();
 
-/* ===== js/themes.js ===== */
+/* js/themes.js */
 /* ============================================================
    themes.js — theme switching, accent, fonts, background system
    ============================================================ */
@@ -1123,7 +1144,7 @@ const Themes = (() => {
   const NAMES = { aurora:"Aurora", light:"Light", dark:"Dark", amoled:"AMOLED", glass:"Glass",
                   cyber:"Cyberpunk", midnight:"Midnight Blue", vision:"Vision Pro", minimal:"Minimal White", luxury:"Luxury Gold" };
   const ACCENTS = ["#7c9cff","#4f6bff","#00e0b8","#ff2ea6","#d4af5a","#ff7a45","#27d39a","#b06bff","#ff5fa8","#00f0ff"];
-  const FONTS = { Manrope:"Manrope", Sora:"Sora", "IBM Plex Sans Arabic":"Plex Arabic", Bricolage:"Bricolage Grotesque" };
+  const FONTS = { Sora:"Sora", "IBM Plex Sans Arabic":"Plex Arabic", System:"System" };
   const GRADIENTS = [
     "radial-gradient(120% 120% at 15% 0%,#1a1b3a,#0a0a18 42%,#05050d)",
     "linear-gradient(135deg,#3a2b6e,#26527e 45%,#2b8a9c)",
@@ -1149,9 +1170,10 @@ const Themes = (() => {
     else root.removeProperty("--accent");
     root.setProperty("--glass-blur", s.glassBlur + "px");
     root.setProperty("--card-alpha", s.cardAlpha);
-    const fontMap = { Manrope:'"Manrope",system-ui,sans-serif', Sora:'"Sora",system-ui,sans-serif',
-      "IBM Plex Sans Arabic":'"IBM Plex Sans Arabic",system-ui,sans-serif', Bricolage:'"Bricolage Grotesque",system-ui,sans-serif' };
-    root.setProperty("--font-ui", fontMap[s.uiFont] || fontMap.Manrope);
+    const fontMap = { Sora:'"Sora",system-ui,sans-serif',
+      "IBM Plex Sans Arabic":'"IBM Plex Sans Arabic",system-ui,sans-serif',
+      System:'system-ui,-apple-system,"Segoe UI",sans-serif' };
+    root.setProperty("--font-ui", fontMap[s.uiFont] || fontMap.Sora);
     const rs = s.radiusScale || 1;
     root.setProperty("--r-md", (20*rs)+"px");
     root.setProperty("--r-lg", (28*rs)+"px");
@@ -1205,7 +1227,7 @@ const Themes = (() => {
   return { LIST, NAMES, ACCENTS, FONTS, GRADIENTS, ANIM, applyAll, applyTheme, applyBackground, cycle };
 })();
 
-/* ===== js/search.js ===== */
+/* js/search.js */
 /* ============================================================
    search.js — multi search engines, custom CRUD, reorder,
                hotkeys, live suggestions
@@ -1338,7 +1360,7 @@ const Search = (() => {
     if (/^https?:\/\//i.test(q)) url = q;
     else if (template.includes("%s")) url = template.replace("%s", encodeURIComponent(q));
     else url = template + encodeURIComponent(q);
-    window.open(url, "_self");
+    window.open(url, "_blank", "noopener");
   }
 
   function reorder(from, to){
@@ -1402,7 +1424,7 @@ const Search = (() => {
   return { render, openEngineModal, initHotkeys, focusFirst };
 })();
 
-/* ===== js/bookmarks.js ===== */
+/* js/bookmarks.js */
 /* ============================================================
    bookmarks.js — categories, CRUD, drag & drop, pin,
                   grid / list / folder views
@@ -1434,7 +1456,7 @@ const Bookmarks = (() => {
   function buildCard(it, realIdx, catIdx, listMode){
     const card = document.createElement("a");
     card.className = "bm-card";
-    card.href = it.url; card.draggable = true; card.dataset.idx = realIdx;
+    card.href = it.url; card.target = "_blank"; card.rel = "noopener"; card.draggable = true; card.dataset.idx = realIdx;
     const fav = favicon(it.url);
     const letter = (it.title||"?")[0].toUpperCase();
     card.innerHTML = `
@@ -1597,7 +1619,7 @@ const Bookmarks = (() => {
   return { renderAll, renderTabs, renderGrid, addCategory, toggleView };
 })();
 
-/* ===== js/widgets.js ===== */
+/* js/widgets.js */
 /* ============================================================
    widgets.js — weather, prayer, todo, notes, pomodoro,
    calculator, world clock, crypto, calendar
@@ -1803,40 +1825,46 @@ const Widgets = (() => {
     }catch{ body.innerHTML=`<div class="crypto-row">${I18N.t("noData")}</div>`; }
   }
 
-  /* ---------------- STOCKS WATCHLIST ---------------- */
+  /* ---------------- STOCKS WATCHLIST (US live + Saudi links) ---------------- */
+  const SAUDI_NAMES = { "2222":"أرامكو", "1120":"الراجحي", "7010":"STC", "2010":"سابك",
+    "1010":"الرياض", "1180":"الأهلي", "2350":"كيان", "4002":"المواساة", "1211":"معادن", "4030":"البحري" };
   function buildStocks(){
     const el=card("stocks", '<path d="M3 17l6-6 4 4 8-8M21 7v5h-5"/>',
-      `<div class="crypto-list" id="stkList"><div class="crypto-row skeleton">—</div></div>`,
+      `<div class="stk-group"><div class="stk-label">🇺🇸 ${I18N.lang==="ar"?"السوق الأمريكي":"US Market"}</div><div class="stk-boxes" id="stkUS"><div class="stk-box skeleton">—</div></div></div>
+       <div class="stk-group"><div class="stk-label">🇸🇦 ${I18N.lang==="ar"?"السوق السعودي":"Saudi (Tadawul)"}</div><div class="stk-boxes" id="stkSA"></div></div>`,
       `<button class="w-act" data-edit>${I18N.lang==="ar"?"تعديل":"Edit"}</button>`);
-    el.querySelector("[data-edit]").onclick=()=>{
-      const cur=Store.get().stockSymbols.join(", ");
-      const v=prompt(I18N.lang==="ar"?"الرموز (مفصولة بفاصلة):":"Symbols (comma separated):",cur);
-      if(v!=null){ const arr=v.split(",").map(x=>x.trim().toUpperCase()).filter(Boolean); Store.set({stockSymbols:arr}); render(); }
-    };
-    loadStocks(el);
+    el.querySelector("[data-edit]").onclick=()=>Settings.open("widgets");
+    loadStocksUS(el);
+    renderSaudi(el);
     return el;
   }
-  async function loadStocks(el){
-    const body=el.querySelector("#stkList");
+  function renderSaudi(el){
+    const box=el.querySelector("#stkSA");
+    const syms=Store.get().saudiSymbols;
+    if(!syms.length){ box.innerHTML=`<div class="stk-box muted">${I18N.lang==="ar"?"لا رموز":"None"}</div>`; return; }
+    box.innerHTML=syms.map(code=>{
+      const nm=SAUDI_NAMES[code]||code;
+      return `<a class="stk-box link" href="https://www.tradingview.com/symbols/TADAWUL-${encodeURIComponent(code)}/" target="_blank" rel="noopener">
+        <span class="stk-sym">${esc(nm)}</span><span class="stk-code">${esc(code)}</span><span class="stk-go">↗</span></a>`;
+    }).join("");
+  }
+  async function loadStocksUS(el){
+    const box=el.querySelector("#stkUS");
     const syms=Store.get().stockSymbols;
-    if(!syms.length){ body.innerHTML=`<div class="crypto-row">${I18N.lang==="ar"?"أضف رموزاً":"Add symbols"}</div>`; return; }
+    if(!syms.length){ box.innerHTML=`<div class="stk-box muted">${I18N.lang==="ar"?"لا رموز":"None"}</div>`; return; }
     const rows=await Promise.all(syms.map(async sym=>{
       try{
         const r=await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=1d`);
         if(!r.ok) throw 0;
-        const j=await r.json();
-        const m=j.chart.result[0].meta;
+        const m=(await r.json()).chart.result[0].meta;
         const px=m.regularMarketPrice, prev=m.chartPreviousClose||m.previousClose||px;
         const chg=prev?((px/prev-1)*100):0;
-        return `<div class="crypto-row"><span class="sym">${esc(sym)}</span><span class="chg ${chg>=0?'up':'down'}">${chg>=0?'▲':'▼'} ${Math.abs(chg).toFixed(2)}%</span><span class="px">${px.toLocaleString(undefined,{maximumFractionDigits:2})}</span></div>`;
+        return `<div class="stk-box"><span class="stk-sym">${esc(sym)}</span><span class="stk-px">${px.toLocaleString(undefined,{maximumFractionDigits:2})}</span><span class="stk-chg ${chg>=0?'up':'down'}">${chg>=0?'▲':'▼'}${Math.abs(chg).toFixed(2)}%</span></div>`;
       }catch{
-        return `<a class="crypto-row" href="https://finance.yahoo.com/quote/${encodeURIComponent(sym)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span class="sym">${esc(sym)}</span><span class="chg" style="color:var(--muted)">${I18N.lang==="ar"?"عرض ↗":"view ↗"}</span><span class="px">—</span></a>`;
+        return `<a class="stk-box link" href="https://finance.yahoo.com/quote/${encodeURIComponent(sym)}" target="_blank" rel="noopener"><span class="stk-sym">${esc(sym)}</span><span class="stk-go">${I18N.lang==="ar"?"عرض ↗":"view ↗"}</span></a>`;
       }
     }));
-    body.innerHTML=rows.join("");
-    if(rows.every(r=>r.includes("view ↗")||r.includes("عرض ↗"))){
-      body.insertAdjacentHTML("beforeend",`<div class="wx-meta" style="margin-top:8px">${I18N.lang==="ar"?"تعذّر جلب الأسعار المباشرة هنا — اضغط الرمز للعرض":"Live prices blocked here — tap a symbol to view"}</div>`);
-    }
+    box.innerHTML=rows.join("");
   }
 
   /* ---------------- CALENDAR (Gregorian + Hijri month) ---------------- */
@@ -1861,14 +1889,14 @@ const Widgets = (() => {
   return { render };
 })();
 
-/* ===== js/settings.js ===== */
+/* js/settings.js */
 /* ============================================================
    settings.js — settings drawer panels
    ============================================================ */
 const Settings = (() => {
   let body, current = "appearance";
 
-  function open(tab){ if (tab) current = tab; render(); UI.openDrawer(); }
+  function open(tab){ if (tab){ current = tab; document.querySelectorAll("#drawerTabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab)); } render(); UI.openDrawer(); }
   function setTab(tab){ current = tab; document.querySelectorAll("#drawerTabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab)); render(); }
 
   function render(){
@@ -1964,17 +1992,32 @@ const Settings = (() => {
 
   /* ---------- WIDGETS ---------- */
   function widgetsPanel(){
-    const w=Store.get().widgets;
+    const s=Store.get(); const w=s.widgets;
     const labels={weather:"weather",prayer:"prayer",todo:"todo",notes:"notes",calendar:"calendar",pomodoro:"pomodoro",worldclock:"worldclock",crypto:"crypto",stocks:"stocks",calculator:"calculator"};
-    return Object.keys(labels).map(k=>`
+    let html = Object.keys(labels).map(k=>`
       <div class="toggle-row"><span class="t-name">${I18N.t(labels[k])}</span><button class="switch ${w[k]?'on':''}" data-widget="${k}"></button></div>`).join("");
+    if (w.stocks){
+      html += `
+      <div class="field" style="margin-top:14px"><label>🇺🇸 ${I18N.lang==='ar'?'رموز أمريكية (مفصولة بفاصلة)':'US symbols (comma separated)'}</label>
+        <input id="usSyms" value="${s.stockSymbols.join(', ')}" placeholder="AAPL, MSFT, NVDA"></div>
+      <div class="field"><label>🇸🇦 ${I18N.lang==='ar'?'أرقام أسهم سعودية (مثل 2222)':'Saudi codes (e.g. 2222)'}</label>
+        <input id="saSyms" value="${s.saudiSymbols.join(', ')}" placeholder="2222, 1120, 7010"></div>`;
+    }
+    return html;
   }
   function wireWidgets(){
     q("[data-widget]",true).forEach(b=>b.onclick=()=>{
       const k=b.dataset.widget;
       Store.update(s=>s.widgets[k]=!s.widgets[k]);
       b.classList.toggle("on"); Widgets.render();
+      if(k==="stocks") render(); // show/hide symbol editors
     });
+    const us=q("#usSyms"); if(us) us.onchange=()=>{
+      Store.set({stockSymbols: us.value.split(",").map(x=>x.trim().toUpperCase()).filter(Boolean)}); Widgets.render();
+    };
+    const sa=q("#saSyms"); if(sa) sa.onchange=()=>{
+      Store.set({saudiSymbols: sa.value.split(",").map(x=>x.trim()).filter(Boolean)}); Widgets.render();
+    };
   }
 
   /* ---------- DATA ---------- */
@@ -2005,7 +2048,7 @@ const Settings = (() => {
   return { open, setTab, render };
 })();
 
-/* ===== js/app.js ===== */
+/* js/app.js */
 /* ============================================================
    app.js — UI helpers, particles, init, wiring, PWA
    ============================================================ */
@@ -2127,7 +2170,7 @@ const App = (() => {
     setTimeout(()=>document.getElementById("boot").classList.add("gone"),520);
 
     // PWA
-    if(false /* single-file: SW disabled */ && "serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+    if(false && "serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
   }
 
   function wire(){

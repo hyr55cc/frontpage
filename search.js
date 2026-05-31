@@ -130,7 +130,7 @@ const Search = (() => {
     if (/^https?:\/\//i.test(q)) url = q;
     else if (template.includes("%s")) url = template.replace("%s", encodeURIComponent(q));
     else url = template + encodeURIComponent(q);
-    window.open(url, "_self");
+    window.open(url, "_blank", "noopener");
   }
 
   function reorder(from, to){

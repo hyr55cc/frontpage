@@ -6,7 +6,7 @@ const Themes = (() => {
   const NAMES = { aurora:"Aurora", light:"Light", dark:"Dark", amoled:"AMOLED", glass:"Glass",
                   cyber:"Cyberpunk", midnight:"Midnight Blue", vision:"Vision Pro", minimal:"Minimal White", luxury:"Luxury Gold" };
   const ACCENTS = ["#7c9cff","#4f6bff","#00e0b8","#ff2ea6","#d4af5a","#ff7a45","#27d39a","#b06bff","#ff5fa8","#00f0ff"];
-  const FONTS = { Manrope:"Manrope", Sora:"Sora", "IBM Plex Sans Arabic":"Plex Arabic", Bricolage:"Bricolage Grotesque" };
+  const FONTS = { Sora:"Sora", "IBM Plex Sans Arabic":"Plex Arabic", System:"System" };
   const GRADIENTS = [
     "radial-gradient(120% 120% at 15% 0%,#1a1b3a,#0a0a18 42%,#05050d)",
     "linear-gradient(135deg,#3a2b6e,#26527e 45%,#2b8a9c)",
@@ -32,9 +32,10 @@ const Themes = (() => {
     else root.removeProperty("--accent");
     root.setProperty("--glass-blur", s.glassBlur + "px");
     root.setProperty("--card-alpha", s.cardAlpha);
-    const fontMap = { Manrope:'"Manrope",system-ui,sans-serif', Sora:'"Sora",system-ui,sans-serif',
-      "IBM Plex Sans Arabic":'"IBM Plex Sans Arabic",system-ui,sans-serif', Bricolage:'"Bricolage Grotesque",system-ui,sans-serif' };
-    root.setProperty("--font-ui", fontMap[s.uiFont] || fontMap.Manrope);
+    const fontMap = { Sora:'"Sora",system-ui,sans-serif',
+      "IBM Plex Sans Arabic":'"IBM Plex Sans Arabic",system-ui,sans-serif',
+      System:'system-ui,-apple-system,"Segoe UI",sans-serif' };
+    root.setProperty("--font-ui", fontMap[s.uiFont] || fontMap.Sora);
     const rs = s.radiusScale || 1;
     root.setProperty("--r-md", (20*rs)+"px");
     root.setProperty("--r-lg", (28*rs)+"px");
