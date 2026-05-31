@@ -40,6 +40,7 @@ const Themes = (() => {
     root.setProperty("--r-md", (20*rs)+"px");
     root.setProperty("--r-lg", (28*rs)+"px");
     root.setProperty("--r-sm", (14*rs)+"px");
+    root.setProperty("--gap", (s.widgetGap==null?18:s.widgetGap)+"px");
   }
 
   function applyBackground(s){

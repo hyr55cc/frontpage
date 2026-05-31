@@ -338,17 +338,27 @@ const Widgets = (() => {
           if(d && typeof d.c==="number" && d.c>0) return cell(sym, d.c, d.dp||0);
         }catch{}
       }
-      // 2) Yahoo (often blocked by CORS)
+      // 2) Yahoo direct (works in some browsers)
       try{
         const j=await Store.cachedFetch("yh_"+sym, `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=1d`, 60*1000);
         const m=j.chart.result[0].meta;
         const px=m.regularMarketPrice, prev=m.chartPreviousClose||m.previousClose||px;
-        return cell(sym, px, prev?((px/prev-1)*100):0);
-      }catch{ return linkCell(sym); }
+        if(px) return cell(sym, px, prev?((px/prev-1)*100):0);
+      }catch{}
+      // 3) Free CORS proxy around Yahoo (no key needed)
+      try{
+        const target=`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?interval=1d&range=1d`;
+        const j=await Store.cachedFetch("px_"+sym, `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}`, 90*1000);
+        const m=j.chart.result[0].meta;
+        const px=m.regularMarketPrice, prev=m.chartPreviousClose||m.previousClose||px;
+        if(px) return cell(sym, px, prev?((px/prev-1)*100):0);
+      }catch{}
+      // 4) last resort: link
+      return linkCell(sym);
     }));
     box.innerHTML=rows.join("");
-    if(!key && rows.every(r=>r.includes("stk-go"))){
-      box.insertAdjacentHTML("beforeend",`<div class="stk-box muted" style="grid-column:1/-1;font-size:.74rem">${I18N.lang==="ar"?"أضف مفتاح Finnhub المجاني من الإعدادات لأسعار حيّة":"Add a free Finnhub key in Settings for live prices"}</div>`);
+    if(!key && rows.some(r=>r.includes("stk-go"))){
+      box.insertAdjacentHTML("beforeend",`<div class="stk-box muted" style="grid-column:1/-1;font-size:.72rem">${I18N.lang==="ar"?"للأسعار الفورية الدائمة أضف مفتاح Finnhub المجاني من الإعدادات":"For always-on live prices, add a free Finnhub key in Settings"}</div>`);
     }
   }
 

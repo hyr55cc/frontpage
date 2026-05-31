@@ -1,193 +1,140 @@
-/* ============================================================
-   bookmarks.js — categories, CRUD, drag & drop, pin,
-                  grid / list / folder views
-   ============================================================ */
-const Bookmarks = (() => {
-  let grid, tabs, drag = null; // {cat, idx}
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="aurora">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="FrontPage — a premium, customizable browser start page with multi-search, smart bookmarks, widgets and themes." />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>FrontPage · Start Page</title>
 
-  function host(url){ try { return new URL(url).hostname.replace(/^www\./,""); } catch { return url; } }
-  function favicon(url){ try { return `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=64`; } catch { return ""; } }
-  const esc = s => String(s||"").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
-  function renderTabs(){
-    tabs = document.getElementById("catTabs");
-    const s = Store.get();
-    tabs.style.display = s.bmView === "folder" ? "none" : "";
-    tabs.innerHTML = "";
-    if (s.bmView === "folder") return;
-    s.categories.forEach((c, i) => {
-      const b = document.createElement("button");
-      b.className = "cat-tab" + (i === s.activeCat ? " active" : "");
-      b.textContent = c.name;
-      b.onclick = () => { Store.set({ activeCat: i }); renderTabs(); renderGrid(); };
-      b.ondblclick = () => renameCategory(i);
-      tabs.appendChild(b);
-    });
-  }
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  // build a single bookmark card bound to a category index
-  function buildCard(it, realIdx, catIdx, listMode){
-    const card = document.createElement("a");
-    card.className = "bm-card";
-    card.href = it.url; card.target = "_blank"; card.rel = "noopener"; card.draggable = true; card.dataset.idx = realIdx;
-    const fav = favicon(it.url);
-    const letter = (it.title||"?")[0].toUpperCase();
-    card.innerHTML = `
-      <button class="bm-edit" title="Edit"><svg viewBox="0 0 24 24" class="ic"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
-      <button class="bm-pin ${it.pinned?'on':''}" title="Pin"><svg viewBox="0 0 24 24" class="ic"><path d="M12 17v5M9 3h6l-1 7 3 3H7l3-3z"/></svg></button>
-      <div class="bm-ico">${fav?`<img src="${fav}" alt="" onerror="this.replaceWith(document.createTextNode('${letter}'))">`:letter}</div>
-      <div class="bm-meta"><div class="bm-title">${esc(it.title)}</div>${listMode?`<div class="bm-host">${esc(host(it.url))}</div>`:''}</div>`;
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+  <!-- ===== Background layers ===== -->
+  <div class="bg-stack" aria-hidden="true">
+    <div id="bgImage" class="bg-layer bg-image"></div>
+    <div id="bgGradient" class="bg-layer bg-gradient"></div>
+    <canvas id="particles" class="bg-layer bg-particles"></canvas>
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+    <div class="bg-orb orb-3"></div>
+    <div id="bgGlow" class="bg-layer bg-glow"></div>
+    <div class="bg-grain"></div>
+  </div>
 
-    card.querySelector(".bm-edit").addEventListener("click", e => { e.preventDefault(); e.stopPropagation(); openModal(realIdx, catIdx); });
-    card.querySelector(".bm-pin").addEventListener("click", e => {
-      e.preventDefault(); e.stopPropagation();
-      Store.update(st => { const i = st.categories[catIdx].items[realIdx]; i.pinned = !i.pinned; });
-      renderGrid();
-    });
-    card.addEventListener("dragstart", () => { drag = {cat:catIdx, idx:realIdx}; card.classList.add("dragging"); });
-    card.addEventListener("dragend",   () => { drag = null; card.classList.remove("dragging"); document.querySelectorAll(".drag-over").forEach(x=>x.classList.remove("drag-over")); });
-    card.addEventListener("dragover", e => { e.preventDefault(); card.classList.add("drag-over"); });
-    card.addEventListener("dragleave",() => card.classList.remove("drag-over"));
-    card.addEventListener("drop", e => { e.preventDefault(); move(drag, realIdx, catIdx); });
-    return card;
-  }
+  <!-- ===== Boot / loading ===== -->
+  <div id="boot" class="boot">
+    <div class="boot-mark"><span></span><span></span><span></span></div>
+    <p class="boot-text">FrontPage</p>
+  </div>
 
-  function buildAdd(catIdx){
-    const add = document.createElement("button");
-    add.className = "bm-card bm-add";
-    add.innerHTML = `<svg viewBox="0 0 24 24" class="ic"><path d="M12 5v14M5 12h14"/></svg>`;
-    add.onclick = () => openModal(null, catIdx);
-    return add;
-  }
+  <!-- ===== Top bar ===== -->
+  <header class="topbar" id="topbar">
+    <div class="brand">
+      <div class="brand-glyph"></div>
+      <span class="brand-name">FrontPage</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="langToggle" title="Language" aria-label="Toggle language"><span id="langLabel">عربي</span></button>
+      <button class="icon-btn" id="openSettings" title="Settings" aria-label="Open settings">
+        <svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>
+      </button>
+    </div>
+  </header>
 
-  function pinnedOrder(items){
-    return items.map((_, i) => i).sort((a,b) => (items[b].pinned?1:0) - (items[a].pinned?1:0));
-  }
+  <main class="stage">
+    <!-- ===== Hero / clock ===== -->
+    <section class="hero reveal" id="hero">
+      <div class="greeting" id="greeting">Good evening</div>
+      <h1 class="clock" id="clock"><span id="clockTime">--:--</span><span class="clock-sec" id="clockSec">00</span></h1>
+      <div class="dates">
+        <div class="date-pill"><span class="date-key" data-i18n="day">Day</span><span id="dayName">—</span></div>
+        <div class="date-pill"><span class="date-key" data-i18n="gregorian">Gregorian</span><span id="gregDate">—</span></div>
+        <div class="date-pill"><span class="date-key" data-i18n="hijri">Hijri</span><span id="hijriDate">—</span></div>
+      </div>
+    </section>
 
-  function renderGrid(){
-    grid = document.getElementById("bmGrid");
-    const s = Store.get();
-    grid.innerHTML = "";
+    <!-- ===== Search ===== -->
+    <section class="search-wrap reveal" id="searchWrap" style="--d:.05s">
+      <div class="search-rail" id="searchRail"><!-- engine boxes injected --></div>
+      <button class="add-engine" id="addEngine" title="Add search engine">
+        <svg viewBox="0 0 24 24" class="ic"><path d="M12 5v14M5 12h14"/></svg>
+        <span data-i18n="addEngine">Add engine</span>
+      </button>
+      <p class="search-hint" data-i18n="searchHint">Press <kbd>/</kbd> to focus · <kbd>Alt</kbd>+<kbd>1–9</kbd> to jump · <kbd>Enter</kbd> to search</p>
+    </section>
 
-    if (s.bmView === "folder"){
-      grid.className = "bm-folders";
-      s.categories.forEach((cat, ci) => {
-        const sec = document.createElement("div");
-        sec.className = "bm-folder";
-        sec.innerHTML = `<div class="bm-folder-head"><span class="bm-folder-name">${esc(cat.name)}</span><span class="bm-folder-count">${cat.items.length}</span></div>`;
-        const g = document.createElement("div");
-        g.className = "bm-grid";
-        pinnedOrder(cat.items).forEach(ri => g.appendChild(buildCard(cat.items[ri], ri, ci, false)));
-        g.appendChild(buildAdd(ci));
-        sec.appendChild(g);
-        grid.appendChild(sec);
-      });
-      return;
-    }
+    <!-- ===== Bookmarks ===== -->
+    <section class="bm-section reveal" id="bookmarks" style="--d:.1s">
+      <div class="section-head">
+        <h2 data-i18n="bookmarks">Bookmarks</h2>
+        <div class="section-tools">
+          <div class="cat-tabs" id="catTabs"></div>
+          <button class="ghost-btn" id="addCategory" title="New category">
+            <svg viewBox="0 0 24 24" class="ic"><path d="M12 5v14M5 12h14"/></svg>
+            <span data-i18n="category">Category</span>
+          </button>
+        </div>
+      </div>
+      <div class="bm-grid" id="bmGrid"></div>
+    </section>
 
-    const cat = s.categories[s.activeCat] || s.categories[0];
-    grid.className = "bm-grid" + (s.bmView === "list" ? " list" : "");
-    const items = [...(cat?.items || [])];
-    pinnedOrder(items).forEach(ri => grid.appendChild(buildCard(items[ri], ri, s.activeCat, s.bmView==="list")));
-    grid.appendChild(buildAdd(s.activeCat));
+    <!-- ===== Widgets ===== -->
+    <section class="widgets reveal" id="widgets" style="--d:.15s"></section>
 
-    if ((cat?.items||[]).length === 0){
-      const e = document.createElement("div"); e.className = "bm-empty";
-      e.textContent = I18N.lang==="ar" ? "لا توجد مواقع بعد — أضف واحداً" : "No bookmarks yet — add one";
-      grid.insertBefore(e, grid.lastChild);
-    }
-  }
+    <footer class="foot">
+      <span>FrontPage</span>
+      <span class="dot">·</span>
+      <span data-i18n="footHint">Your data stays in this browser</span>
+    </footer>
+  </main>
 
-  function move(d, to, catIdx){
-    if (!d || d.cat !== catIdx || d.idx === to) return; // reorder within same folder only
-    Store.update(s => {
-      const arr = s.categories[catIdx].items;
-      const [m] = arr.splice(d.idx, 1);
-      arr.splice(to, 0, m);
-    });
-    renderGrid();
-  }
+  <!-- ===== Settings drawer ===== -->
+  <div class="scrim" id="scrim"></div>
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h3 data-i18n="settings">Settings</h3>
+      <button class="icon-btn" id="closeSettings" aria-label="Close"><svg viewBox="0 0 24 24" class="ic"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <nav class="drawer-tabs" id="drawerTabs">
+      <button class="active" data-tab="appearance" data-i18n="appearance">Appearance</button>
+      <button data-tab="background" data-i18n="background">Background</button>
+      <button data-tab="widgets" data-i18n="widgetsTab">Widgets</button>
+      <button data-tab="data" data-i18n="data">Data</button>
+    </nav>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
 
-  function openModal(idx, catIdx){
-    const s = Store.get();
-    const ci = catIdx==null ? s.activeCat : catIdx;
-    const it = idx != null ? s.categories[ci].items[idx] : null;
-    UI.modal(I18N.t(it ? "editBookmark" : "addBookmark"), `
-      <label>${I18N.t("title")}</label>
-      <input id="bmTitle" value="${it?esc(it.title):""}" placeholder="GitHub" />
-      <label>${I18N.t("url")}</label>
-      <input id="bmUrl" value="${it?esc(it.url):"https://"}" placeholder="https://github.com" />
-      <div class="modal-actions">
-        ${it?`<button class="btn btn-danger" id="bmDel">${I18N.t("delete")}</button>`:""}
-        <button class="btn btn-soft" data-close>${I18N.t("cancel")}</button>
-        <button class="btn btn-primary" id="bmSave">${I18N.t("save")}</button>
-      </div>`);
-    document.getElementById("bmSave").onclick = () => {
-      let title = v("bmTitle"), url = v("bmUrl");
-      if (!url) return;
-      if (!/^https?:\/\//i.test(url)) url = "https://" + url;
-      if (!title) title = host(url);
-      Store.update(st => {
-        const arr = st.categories[ci].items;
-        if (it) Object.assign(it, { title, url });
-        else arr.push({ title, url, pinned:false });
-      });
-      renderGrid(); UI.closeModal();
-    };
-    if (it) document.getElementById("bmDel").onclick = () => {
-      Store.update(st => st.categories[ci].items.splice(idx,1));
-      renderGrid(); UI.closeModal();
-    };
-  }
+  <!-- ===== Generic modal ===== -->
+  <div class="modal-scrim" id="modalScrim">
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+      <div class="modal-head"><h4 id="modalTitle">Title</h4><button class="icon-btn" id="modalClose"><svg viewBox="0 0 24 24" class="ic"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
 
-  function addCategory(){
-    UI.modal(I18N.t("newCategory"), `
-      <label>${I18N.t("catName")}</label>
-      <input id="catName" placeholder="${I18N.lang==='ar'?'تسوّق، دراسة…':'Shopping, Study…'}" />
-      <div class="modal-actions">
-        <button class="btn btn-soft" data-close>${I18N.t("cancel")}</button>
-        <button class="btn btn-primary" id="catSave">${I18N.t("add")}</button>
-      </div>`);
-    setTimeout(()=>document.getElementById("catName")?.focus(),50);
-    document.getElementById("catSave").onclick = () => {
-      const name = v("catName"); if (!name) return;
-      Store.update(s => { s.categories.push({ name, items:[] }); s.activeCat = s.categories.length-1; });
-      renderTabs(); renderGrid(); UI.closeModal();
-    };
-  }
+  <div class="toast" id="toast"></div>
 
-  function renameCategory(i){
-    const s = Store.get();
-    UI.modal(I18N.t("renameCat"), `
-      <label>${I18N.t("catName")}</label>
-      <input id="catName" value="${esc(s.categories[i].name)}" />
-      <div class="modal-actions">
-        ${s.categories.length>1?`<button class="btn btn-danger" id="catDel">${I18N.t("delete")}</button>`:""}
-        <button class="btn btn-soft" data-close>${I18N.t("cancel")}</button>
-        <button class="btn btn-primary" id="catSave">${I18N.t("save")}</button>
-      </div>`);
-    document.getElementById("catSave").onclick = () => {
-      const name = v("catName"); if (!name) return;
-      Store.update(st => st.categories[i].name = name);
-      renderTabs(); renderGrid(); UI.closeModal();
-    };
-    if (s.categories.length>1) document.getElementById("catDel").onclick = () => {
-      Store.update(st => { st.categories.splice(i,1); if (st.activeCat>=st.categories.length) st.activeCat=0; });
-      renderTabs(); renderGrid(); UI.closeModal();
-    };
-  }
-
-  const VIEWS = ["grid","list","folder"];
-  const VIEW_LABEL = { grid:{en:"Grid view",ar:"عرض شبكي"}, list:{en:"List view",ar:"عرض قائمة"}, folder:{en:"Folder view",ar:"عرض المجلدات"} };
-  function toggleView(){
-    const s = Store.get();
-    const next = VIEWS[(VIEWS.indexOf(s.bmView)+1) % VIEWS.length];
-    Store.set({ bmView: next });
-    renderTabs(); renderGrid();
-    UI.toast(VIEW_LABEL[next][I18N.lang] || VIEW_LABEL[next].en);
-  }
-
-  const v = id => document.getElementById(id).value.trim();
-  function renderAll(){ renderTabs(); renderGrid(); }
-  return { renderAll, renderTabs, renderGrid, addCategory, toggleView };
-})();
+  <script src="js/storage.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/clock.js"></script>
+  <script src="js/notify.js"></script>
+  <script src="js/themes.js"></script>
+  <script src="js/search.js"></script>
+  <script src="js/bookmarks.js"></script>
+  <script src="js/widgets.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -54,6 +54,7 @@ const Store = (() => {
     alertSound: "chime",
     widgetOrder: ["weather","prayer","todo","notes","calendar","pomodoro","worldclock","crypto","stocks","calculator"],
     widgetSize: {},
+    widgetGap: 18,
     widgets: {
       weather: true, prayer: true, todo: true, notes: true,
       pomodoro: true, calculator: false, worldclock: false,

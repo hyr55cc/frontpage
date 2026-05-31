@@ -36,7 +36,8 @@ const Settings = (() => {
       <div class="toggle-row"><span class="t-name">${I18N.t("suggestions")}</span><button class="switch ${s.suggest?'on':''}" data-suggest></button></div>
       <div class="field"><label>${I18N.t("glassBlur")} · ${s.glassBlur}px</label><input type="range" class="slider" min="0" max="40" value="${s.glassBlur}" data-blur></div>
       <div class="field"><label>${I18N.t("cardOpacity")} · ${Math.round(s.cardAlpha*100)}%</label><input type="range" class="slider" min="30" max="100" value="${s.cardAlpha*100}" data-alpha></div>
-      <div class="field"><label>${I18N.t("corners")} · ${Math.round(s.radiusScale*100)}%</label><input type="range" class="slider" min="40" max="160" value="${s.radiusScale*100}" data-radius></div>`;
+      <div class="field"><label>${I18N.t("corners")} · ${Math.round(s.radiusScale*100)}%</label><input type="range" class="slider" min="40" max="160" value="${s.radiusScale*100}" data-radius></div>
+      <div class="field"><label>${I18N.t("widgetGap")} · ${s.widgetGap==null?18:s.widgetGap}px</label><input type="range" class="slider" min="6" max="40" value="${s.widgetGap==null?18:s.widgetGap}" data-gap></div>`;
   }
   function chipBg(t){
     const m={aurora:"radial-gradient(120% 120% at 15% 0%,#1a1b3a,#0a0a18)",light:"#eef1ff",dark:"#161a24",amoled:"#000",
@@ -54,6 +55,7 @@ const Settings = (() => {
     q("[data-blur]").oninput=e=>{Store.set({glassBlur:+e.target.value});liveLabel(e,"px");};
     q("[data-alpha]").oninput=e=>{Store.set({cardAlpha:+e.target.value/100});liveLabel(e,"%",true);};
     q("[data-radius]").oninput=e=>{Store.set({radiusScale:+e.target.value/100});liveLabel(e,"%",true);};
+    q("[data-gap]").oninput=e=>{Store.set({widgetGap:+e.target.value});liveLabel(e,"px");};
   }
   function liveLabel(e,unit,pct){ const v=pct?e.target.value:e.target.value; e.target.previousElementSibling.textContent=e.target.previousElementSibling.textContent.replace(/·.*/,"· "+(unit==="%"?Math.round(v):v)+unit); }
 
@@ -114,13 +116,18 @@ const Settings = (() => {
     }
     if (w.stocks){
       html += `
-      <div class="field" style="margin-top:14px"><label>🇺🇸 ${I18N.lang==='ar'?'رموز أمريكية (مفصولة بفاصلة)':'US symbols (comma separated)'}</label>
-        <input id="usSyms" value="${s.stockSymbols.join(', ')}" placeholder="AAPL, MSFT, NVDA"></div>
-      <div class="field"><label>🇸🇦 ${I18N.lang==='ar'?'أرقام أسهم سعودية (مثل 2222)':'Saudi codes (e.g. 2222)'}</label>
-        <input id="saSyms" value="${s.saudiSymbols.join(', ')}" placeholder="2222, 1120, 7010"></div>
-      <div class="field"><label>🔑 ${I18N.t("finnhubKey")}</label>
-        <input id="fhKey" value="${esc(s.finnhubKey||'')}" placeholder="d0xxxx..." autocomplete="off">
-        <p class="hint" style="margin-top:6px">${I18N.t("finnhubHint")} · <a href="https://finnhub.io/register" target="_blank" rel="noopener" style="color:var(--accent)">finnhub.io/register ↗</a></p></div>`;
+      <div class="set-card">
+        <div class="set-card-title">📈 ${I18N.lang==='ar'?'إعدادات الأسهم':'Stocks settings'}</div>
+        <div class="field"><label>🇺🇸 ${I18N.lang==='ar'?'رموز أمريكية':'US symbols'}</label>
+          <input id="usSyms" value="${s.stockSymbols.join(', ')}" placeholder="AAPL, MSFT, NVDA">
+          <p class="hint">${I18N.lang==='ar'?'افصل بين الرموز بفاصلة':'Separate symbols with commas'}</p></div>
+        <div class="field"><label>🇸🇦 ${I18N.lang==='ar'?'أرقام أسهم سعودية':'Saudi codes'}</label>
+          <input id="saSyms" value="${s.saudiSymbols.join(', ')}" placeholder="2222, 1120, 7010">
+          <p class="hint">${I18N.lang==='ar'?'مثال: 2222 = أرامكو':'e.g. 2222 = Aramco'}</p></div>
+        <div class="field" style="margin-bottom:0"><label>🔑 ${I18N.t("finnhubKey")}</label>
+          <input id="fhKey" value="${esc(s.finnhubKey||'')}" placeholder="${I18N.lang==='ar'?'الصق المفتاح هنا (اختياري)':'Paste key here (optional)'}" autocomplete="off">
+          <p class="hint">${I18N.t("finnhubHint")} · <a href="https://finnhub.io/register" target="_blank" rel="noopener" style="color:var(--accent)">finnhub.io/register ↗</a></p></div>
+      </div>`;
     }
     return html;
   }
