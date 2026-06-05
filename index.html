@@ -229,10 +229,10 @@ kbd{
 }
 /* ---------- mouse-follow glow ---------- */
 .bg-glow{
-  position:absolute; width:520px; height:520px; left:0; top:0; border-radius:50%;
-  background:radial-gradient(circle, color-mix(in srgb, var(--accent) 40%, transparent), transparent 62%);
-  filter:blur(40px); opacity:.0; pointer-events:none; transform:translate(-50%,-50%);
-  transition:opacity .5s var(--ease); mix-blend-mode:screen; will-change:left,top;
+  position:absolute; width:460px; height:460px; left:0; top:0; border-radius:50%;
+  background:radial-gradient(circle, color-mix(in srgb, var(--accent) 38%, transparent), transparent 62%);
+  filter:blur(34px); opacity:0; pointer-events:none; transform:translate(-50%,-50%);
+  transition:opacity .5s var(--ease); mix-blend-mode:screen; will-change:transform;
 }
 .bg-particles{ width:100%;height:100%; opacity:.7; }
 .bg-grain{
@@ -240,14 +240,14 @@ kbd{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 .bg-orb{
-  position:absolute; width:46vmax; height:46vmax; border-radius:50%;
-  filter:blur(80px); opacity:.5; pointer-events:none; will-change:transform;
+  position:absolute; width:44vmax; height:44vmax; border-radius:50%;
+  filter:blur(48px); opacity:.45; pointer-events:none; will-change:transform; transform:translateZ(0);
 }
-.orb-1{ background:var(--orb-1); top:-18%; left:-10%; animation:drift1 26s var(--ease) infinite alternate; }
-.orb-2{ background:var(--orb-2); bottom:-22%; right:-12%; animation:drift2 32s var(--ease) infinite alternate; }
-.orb-3{ background:var(--orb-3); top:35%; right:25%; width:30vmax; height:30vmax; opacity:.32; animation:drift3 38s var(--ease) infinite alternate; }
-[data-theme="minimal"] .bg-orb{ opacity:.25; filter:blur(110px); }
-[data-theme="light"] .bg-orb{ opacity:.35; }
+.orb-1{ background:var(--orb-1); top:-18%; left:-10%; animation:drift1 34s var(--ease) infinite alternate; }
+.orb-2{ background:var(--orb-2); bottom:-22%; right:-12%; animation:drift2 40s var(--ease) infinite alternate; }
+.orb-3{ background:var(--orb-3); top:35%; right:25%; width:30vmax; height:30vmax; opacity:.3; }
+[data-theme="minimal"] .bg-orb{ opacity:.22; filter:blur(60px); }
+[data-theme="light"] .bg-orb{ opacity:.32; }
 
 /* ---------- layout shell ---------- */
 .topbar{
@@ -298,6 +298,23 @@ kbd{
   *{ animation-duration:.001ms!important; transition-duration:.06s!important; }
   .bg-orb{ animation:none; }
 }
+
+/* ---------- low-motion / performance mode ---------- */
+html.low-motion .bg-orb{ animation:none; }
+html.low-motion .bg-glow,
+html.low-motion #particles,
+html.low-motion .bg-grain{ display:none !important; }
+html.low-motion .widget,
+html.low-motion .glass,
+html.low-motion .engine,
+html.low-motion .search-all,
+html.low-motion .topbar{ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+html.low-motion .widget,
+html.low-motion .bm-card,
+html.low-motion .engine{ transition:none !important; }
+html.low-motion .widget:hover,
+html.low-motion .bm-card:hover{ transform:none !important; }
+html.low-motion *{ animation-duration:.001s !important; }
 
 /* css/components.css */
 /* ============================================================
@@ -1026,6 +1043,7 @@ const Store = (() => {
     widgetOrder: ["weather","prayer","todo","notes","calendar","pomodoro","worldclock","crypto","stocks","calculator"],
     widgetSize: {},
     widgetGap: 18,
+    lowMotion: false,
     widgets: {
       weather: true, prayer: true, todo: true, notes: true,
       pomodoro: true, calculator: false, worldclock: false,
@@ -1126,7 +1144,7 @@ const I18N = (() => {
       folder:"Folders", suggestions:"Search suggestions", saturation:"Saturation", animated:"Animated",
       animAurora:"Aurora", animSpace:"Space", animCyber:"Cyber city", animNature:"Nature",
       alertSound:"Reminder sound", finnhubKey:"Finnhub API key (free)", finnhubHint:"For live US stock prices",
-      testSound:"Test", reminders:"Task reminders", widgetSize:"Widget size", reorderHint:"Drag the ⋮ handle to reorder · click ⤢ to resize", widgetGap:"Widget spacing"
+      testSound:"Test", reminders:"Task reminders", widgetSize:"Widget size", reorderHint:"Drag the ⋮ handle to reorder · click ⤢ to resize", widgetGap:"Widget spacing", perfMode:"Performance mode", perfHint:"Disables heavy animations for a faster, smoother page"
     },
     ar: {
       day:"اليوم", gregorian:"ميلادي", hijri:"هجري",
@@ -1155,7 +1173,7 @@ const I18N = (() => {
       folder:"مجلدات", suggestions:"اقتراحات البحث", saturation:"التشبّع", animated:"متحرّكة",
       animAurora:"شفق", animSpace:"فضاء", animCyber:"مدينة سايبر", animNature:"طبيعة",
       alertSound:"صوت التذكير", finnhubKey:"مفتاح Finnhub (مجاني)", finnhubHint:"لأسعار الأسهم الأمريكية الحيّة",
-      testSound:"تجربة", reminders:"تذكيرات المهام", widgetSize:"حجم الأداة", reorderHint:"اسحب المقبض ⋮ لإعادة الترتيب · اضغط ⤢ لتغيير الحجم", widgetGap:"تباعد الأدوات"
+      testSound:"تجربة", reminders:"تذكيرات المهام", widgetSize:"حجم الأداة", reorderHint:"اسحب المقبض ⋮ لإعادة الترتيب · اضغط ⤢ لتغيير الحجم", widgetGap:"تباعد الأدوات", perfMode:"وضع الأداء", perfHint:"يوقف التأثيرات الثقيلة لصفحة أسرع وأخف"
     }
   };
   let lang = "en";
@@ -2282,6 +2300,8 @@ const Settings = (() => {
         <div class="seg"><button class="${s.bmView==='grid'?'active':''}" data-view="grid">${I18N.t("grid")}</button><button class="${s.bmView==='list'?'active':''}" data-view="list">${I18N.t("list")}</button><button class="${s.bmView==='folder'?'active':''}" data-view="folder">${I18N.t("folder")}</button></div>
       </div>
       <div class="toggle-row"><span class="t-name">${I18N.t("suggestions")}</span><button class="switch ${s.suggest?'on':''}" data-suggest></button></div>
+      <div class="toggle-row"><span class="t-name">⚡ ${I18N.t("perfMode")}</span><button class="switch ${s.lowMotion?'on':''}" data-perf></button></div>
+      <p class="hint" style="margin:-6px 2px 14px">${I18N.t("perfHint")}</p>
       <div class="field"><label>${I18N.t("glassBlur")} · ${s.glassBlur}px</label><input type="range" class="slider" min="0" max="40" value="${s.glassBlur}" data-blur></div>
       <div class="field"><label>${I18N.t("cardOpacity")} · ${Math.round(s.cardAlpha*100)}%</label><input type="range" class="slider" min="30" max="100" value="${s.cardAlpha*100}" data-alpha></div>
       <div class="field"><label>${I18N.t("corners")} · ${Math.round(s.radiusScale*100)}%</label><input type="range" class="slider" min="40" max="160" value="${s.radiusScale*100}" data-radius></div>
@@ -2300,6 +2320,7 @@ const Settings = (() => {
     q("[data-font]",true).forEach(b=>b.onclick=()=>{Store.set({uiFont:b.dataset.font});render();});
     q("[data-view]",true).forEach(b=>b.onclick=()=>{Store.set({bmView:b.dataset.view});Bookmarks.renderAll();render();});
     const sug=q("[data-suggest]"); if(sug) sug.onclick=()=>{Store.update(s=>s.suggest=!s.suggest);sug.classList.toggle("on");};
+    const perf=q("[data-perf]"); if(perf) perf.onclick=()=>{ Store.update(s=>s.lowMotion=!s.lowMotion); perf.classList.toggle("on"); location.reload(); };
     q("[data-blur]").oninput=e=>{Store.set({glassBlur:+e.target.value});liveLabel(e,"px");};
     q("[data-alpha]").oninput=e=>{Store.set({cardAlpha:+e.target.value/100});liveLabel(e,"%",true);};
     q("[data-radius]").oninput=e=>{Store.set({radiusScale:+e.target.value/100});liveLabel(e,"%",true);};
@@ -2456,35 +2477,47 @@ const UI = (() => {
 
 /* ---------------- particles ---------------- */
 const Particles = (() => {
-  let cv, ctx, parts=[], raf, W, H, mouse={x:-999,y:-999};
-  function resize(){ W=cv.width=innerWidth*devicePixelRatio; H=cv.height=innerHeight*devicePixelRatio; cv.style.width=innerWidth+"px"; cv.style.height=innerHeight+"px"; }
+  let cv, ctx, parts=[], raf, W, H, mouse={x:-999,y:-999}, accent="#7c9cff", running=false;
+  const DPR = Math.min((typeof devicePixelRatio!=="undefined"?devicePixelRatio:1)||1, 1.5);   // cap retina cost
+  let last=0; const frameMs=1000/30;                 // ~30fps is plenty for an ambient bg
+  function resize(){ W=cv.width=innerWidth*DPR; H=cv.height=innerHeight*DPR; cv.style.width=innerWidth+"px"; cv.style.height=innerHeight+"px"; }
+  function readAccent(){ accent=(getComputedStyle(document.body).getPropertyValue("--accent").trim())||"#7c9cff"; }
   function init(){
-    cv=document.getElementById("particles"); ctx=cv.getContext("2d"); resize();
-    const count=Math.min(70, Math.floor(innerWidth/22));
-    parts=Array.from({length:count},()=>({ x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.25*devicePixelRatio, vy:(Math.random()-.5)*.25*devicePixelRatio, r:(Math.random()*1.6+.4)*devicePixelRatio }));
-    addEventListener("resize",resize);
-    addEventListener("pointermove",e=>{ mouse.x=e.clientX*devicePixelRatio; mouse.y=e.clientY*devicePixelRatio; });
-    loop();
+    if (Store.get().lowMotion || matchMedia("(prefers-reduced-motion:reduce)").matches){ return; }
+    cv=document.getElementById("particles"); if(!cv) return;
+    ctx=cv.getContext("2d"); resize(); readAccent();
+    const count=Math.min(46, Math.floor(innerWidth/34));   // fewer particles
+    parts=Array.from({length:count},()=>({ x:Math.random()*W, y:Math.random()*H, vx:(Math.random()-.5)*.18*DPR, vy:(Math.random()-.5)*.18*DPR, r:(Math.random()*1.5+.4)*DPR }));
+    addEventListener("resize",resize,{passive:true});
+    addEventListener("pointermove",e=>{ mouse.x=e.clientX*DPR; mouse.y=e.clientY*DPR; },{passive:true});
+    Store.subscribe(readAccent);
+    document.addEventListener("visibilitychange",()=>{ if(document.hidden){ running=false; cancelAnimationFrame(raf);} else if(!running){ running=true; last=0; raf=requestAnimationFrame(loop);} });
+    running=true; raf=requestAnimationFrame(loop);
   }
-  function loop(){
-    if (matchMedia("(prefers-reduced-motion:reduce)").matches){ return; }
+  function loop(t){
+    raf=requestAnimationFrame(loop);
+    if (t-last < frameMs) return;                      // throttle
+    last=t;
     ctx.clearRect(0,0,W,H);
-    const accent=getComputedStyle(document.body).getPropertyValue("--accent").trim()||"#7c9cff";
+    const linkDist=96*DPR, md=110*DPR, ld2=linkDist*linkDist;
+    ctx.fillStyle=accent; ctx.globalAlpha=.5;
     for(const p of parts){
       p.x+=p.vx; p.y+=p.vy;
       if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
-      const dx=p.x-mouse.x, dy=p.y-mouse.y, d=Math.hypot(dx,dy);
-      if(d<120*devicePixelRatio){ p.x+=dx/d*.6; p.y+=dy/d*.6; }
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,7); ctx.fillStyle=accent; ctx.globalAlpha=.5; ctx.fill();
+      const dx=p.x-mouse.x, dy=p.y-mouse.y, d2=dx*dx+dy*dy;
+      if(d2<md*md){ const d=Math.sqrt(d2)||1; p.x+=dx/d*.5; p.y+=dy/d*.5; }
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.283); ctx.fill();
     }
-    // links
-    ctx.globalAlpha=.12; ctx.strokeStyle=accent; ctx.lineWidth=devicePixelRatio;
-    for(let i=0;i<parts.length;i++)for(let j=i+1;j<parts.length;j++){
-      const a=parts[i],b=parts[j],dd=Math.hypot(a.x-b.x,a.y-b.y);
-      if(dd<110*devicePixelRatio){ ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
+    ctx.globalAlpha=.1; ctx.strokeStyle=accent; ctx.lineWidth=DPR;
+    for(let i=0;i<parts.length;i++){
+      const a=parts[i];
+      for(let j=i+1;j<parts.length;j++){
+        const b=parts[j], ax=a.x-b.x; if(ax>linkDist||ax<-linkDist) continue;
+        const ay=a.y-b.y; if(ay>linkDist||ay<-linkDist) continue;
+        if(ax*ax+ay*ay<ld2){ ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); }
+      }
     }
     ctx.globalAlpha=1;
-    raf=requestAnimationFrame(loop);
   }
   return { init };
 })();
@@ -2492,21 +2525,25 @@ const Particles = (() => {
 /* ---------------- mouse glow + parallax ---------------- */
 const Glow = (() => {
   function init(){
-    if (matchMedia("(prefers-reduced-motion:reduce)").matches) return;
-    const glow=document.getElementById("bgGlow");
+    if (Store.get().lowMotion || matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+    if (matchMedia("(hover:none)").matches) return;          // skip on touch devices
+    const glow=document.getElementById("bgGlow"); if(!glow) return;
     const orbs=[...document.querySelectorAll(".bg-orb")];
-    let raf, tx=innerWidth/2, ty=innerHeight/2, cx=tx, cy=ty;
-    addEventListener("pointermove", e=>{
-      tx=e.clientX; ty=e.clientY; glow.style.opacity=".8";
-      const ox=(e.clientX/innerWidth-.5), oy=(e.clientY/innerHeight-.5);
-      orbs.forEach((o,i)=>{ const m=(i+1)*14; o.style.transform=`translate(${ox*m}px,${oy*m}px)`; });
-    }, {passive:true});
-    addEventListener("pointerleave", ()=>glow.style.opacity="0");
-    (function follow(){
+    let raf=0, tx=innerWidth/2, ty=innerHeight/2, cx=tx, cy=ty, active=false, idle=0;
+    function tick(){
       cx+=(tx-cx)*.12; cy+=(ty-cy)*.12;
-      glow.style.left=cx+"px"; glow.style.top=cy+"px";
-      raf=requestAnimationFrame(follow);
-    })();
+      glow.style.transform=`translate(${cx}px,${cy}px) translate(-50%,-50%)`;
+      if(Math.abs(tx-cx)<0.5 && Math.abs(ty-cy)<0.5){ idle++; } else { idle=0; }
+      if(idle>30){ active=false; raf=0; return; }             // stop when settled (saves CPU)
+      raf=requestAnimationFrame(tick);
+    }
+    addEventListener("pointermove", e=>{
+      tx=e.clientX; ty=e.clientY; glow.style.opacity=".75"; idle=0;
+      const ox=(e.clientX/innerWidth-.5), oy=(e.clientY/innerHeight-.5);
+      orbs.forEach((o,i)=>{ const m=(i+1)*10; o.style.transform=`translate(${ox*m}px,${oy*m}px)`; });
+      if(!active){ active=true; raf=requestAnimationFrame(tick); }
+    }, {passive:true});
+    addEventListener("pointerleave", ()=>{ glow.style.opacity="0"; });
   }
   return { init };
 })();
@@ -2515,6 +2552,7 @@ const Glow = (() => {
 const App = (() => {
   function applyState(s){
     Themes.applyAll(s);
+    document.documentElement.classList.toggle("low-motion", !!s.lowMotion);
     const meta=document.querySelector('meta[name="theme-color"]');
     if(meta) meta.setAttribute("content", getComputedStyle(document.body).getPropertyValue("--bg").trim());
   }
@@ -2532,8 +2570,18 @@ const App = (() => {
 
   function init(){
     const s=Store.get();
-    I18N.apply(s.lang);
-    applyState(s);
+    // one-time perf auto-detect: weak CPU / low memory / mobile → enable low-motion
+    if (s.lowMotion === false && !localStorage.getItem("lumen.perfChecked")){
+      try {
+        const weak = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4)
+          || (navigator.deviceMemory && navigator.deviceMemory <= 4)
+          || matchMedia("(hover:none)").matches;
+        if (weak){ Store.set({ lowMotion:true }); }
+        localStorage.setItem("lumen.perfChecked","1");
+      } catch {}
+    }
+    I18N.apply(Store.get().lang);
+    applyState(Store.get());
 
     // critical, instant content first
     Clock.start();
