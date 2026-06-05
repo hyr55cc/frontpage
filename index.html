@@ -764,6 +764,36 @@ html[dir="rtl"] .engine-sug .sug-row{ text-align:right; }
 .set-card .set-card-title{ font-weight:800; font-size:.9rem; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
 .set-card .field:last-child{ margin-bottom:0; }
 
+/* ---------- search all (one box → all engines) ---------- */
+.search-all{
+  display:flex; align-items:center; gap:10px; width:min(640px,100%);
+  padding:8px 8px 8px 18px; border-radius:999px;
+  background:color-mix(in srgb,var(--card) calc(var(--card-alpha)*100%),transparent);
+  border:1px solid var(--card-brd); box-shadow:var(--shadow);
+  -webkit-backdrop-filter:blur(var(--glass-blur)); backdrop-filter:blur(var(--glass-blur));
+  transition:transform .25s var(--ease), box-shadow .25s var(--ease), border-color .25s var(--ease);
+}
+.search-all.focused{ transform:translateY(-2px); border-color:var(--accent); box-shadow:0 26px 60px -30px var(--accent); }
+.search-all-ico{ color:var(--accent); display:grid; place-items:center; }
+.search-all-ico .ic{ width:20px; height:20px; }
+.search-all input{
+  flex:1; border:none; background:none; outline:none; color:var(--fg);
+  font:inherit; font-size:1.02rem; min-width:0;
+}
+.search-all input::placeholder{ color:var(--muted); }
+.search-all-go{
+  display:inline-flex; align-items:center; gap:7px; white-space:nowrap;
+  padding:11px 18px; border-radius:999px; border:none; cursor:pointer;
+  font:inherit; font-weight:700; font-size:.9rem;
+  color:var(--on-accent); background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  transition:transform .2s var(--ease), filter .2s var(--ease);
+}
+.search-all-go:hover{ transform:translateY(-1px); filter:brightness(1.08); }
+.search-all-go .ic{ width:16px; height:16px; }
+html[dir="rtl"] .search-all{ padding:8px 18px 8px 8px; }
+html[dir="rtl"] .search-all-go .ic{ transform:scaleX(-1); }
+@media (max-width:560px){ .search-all-go span{ display:none; } .search-all-go{ padding:11px 13px; } }
+
 /* css/animations.css */
 /* ============================================================
    animations.css — keyframes, entrance reveals, micro-interactions
@@ -868,6 +898,16 @@ html[dir="rtl"] .engine-sug .sug-row{ text-align:right; }
 
     <!-- ===== Search ===== -->
     <section class="search-wrap reveal" id="searchWrap" style="--d:.05s">
+      <div class="search-all" id="searchAll">
+        <span class="search-all-ico">
+          <svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        </span>
+        <input type="text" id="searchAllInput" autocomplete="off" data-i18n-ph="searchAllPh" placeholder="Search all engines at once…" />
+        <button class="search-all-go" id="searchAllGo" title="Open in all engines">
+          <span data-i18n="searchAllBtn">Search all</span>
+          <svg viewBox="0 0 24 24" class="ic"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
       <div class="search-rail" id="searchRail"><!-- engine boxes injected --></div>
       <button class="add-engine" id="addEngine" title="Add search engine">
         <svg viewBox="0 0 24 24" class="ic"><path d="M12 5v14M5 12h14"/></svg>
@@ -1061,7 +1101,7 @@ const I18N = (() => {
   const dict = {
     en: {
       day:"Day", gregorian:"Gregorian", hijri:"Hijri",
-      addEngine:"Add engine", searchHint:'Press <kbd>/</kbd> to focus · <kbd>Alt</kbd>+<kbd>1–9</kbd> to jump · <kbd>Enter</kbd> to search',
+      addEngine:"Add engine", searchAllPh:"Search all engines at once…", searchAllBtn:"Search all", searchHint:'Press <kbd>/</kbd> to focus · <kbd>Alt</kbd>+<kbd>1–9</kbd> to jump · <kbd>Enter</kbd> to search',
       bookmarks:"Bookmarks", category:"Category", settings:"Settings",
       appearance:"Appearance", background:"Background", widgetsTab:"Widgets", data:"Data",
       footHint:"Your data stays in this browser",
@@ -1090,7 +1130,7 @@ const I18N = (() => {
     },
     ar: {
       day:"اليوم", gregorian:"ميلادي", hijri:"هجري",
-      addEngine:"إضافة محرك", searchHint:'اضغط <kbd>/</kbd> للتركيز · <kbd>Alt</kbd>+<kbd>1–9</kbd> للتنقل · <kbd>Enter</kbd> للبحث',
+      addEngine:"إضافة محرك", searchAllPh:"ابحث في كل المحركات دفعة واحدة…", searchAllBtn:"بحث الجميع", searchHint:'اضغط <kbd>/</kbd> للتركيز · <kbd>Alt</kbd>+<kbd>1–9</kbd> للتنقل · <kbd>Enter</kbd> للبحث',
       bookmarks:"المفضلة", category:"فئة", settings:"الإعدادات",
       appearance:"المظهر", background:"الخلفية", widgetsTab:"الأدوات", data:"البيانات",
       footHint:"بياناتك محفوظة في هذا المتصفح فقط",
@@ -1129,6 +1169,9 @@ const I18N = (() => {
       const k = el.getAttribute("data-i18n");
       const v = t(k);
       if (/<kbd|<b|<i/.test(v)) el.innerHTML = v; else el.textContent = v;
+    });
+    document.querySelectorAll("[data-i18n-ph]").forEach(el => {
+      el.setAttribute("placeholder", t(el.getAttribute("data-i18n-ph")));
     });
     const ll = document.getElementById("langLabel");
     if (ll) ll.textContent = lang === "ar" ? "EN" : "عربي";
@@ -1505,14 +1548,58 @@ const Search = (() => {
     return I18N.lang === "ar" ? `ابحث في ${name}…` : `Search ${name}…`;
   }
 
+  function buildUrl(template, q){
+    if (/^https?:\/\//i.test(q)) return q;
+    if (template.includes("%s")) return template.replace("%s", encodeURIComponent(q));
+    return template + encodeURIComponent(q);
+  }
+
   function doSearch(template, q){
     q = (q || "").trim();
     if (!q) return;
-    let url;
-    if (/^https?:\/\//i.test(q)) url = q;
-    else if (template.includes("%s")) url = template.replace("%s", encodeURIComponent(q));
-    else url = template + encodeURIComponent(q);
-    window.open(url, "_blank", "noopener");
+    window.open(buildUrl(template, q), "_blank", "noopener");
+  }
+
+  /* ---- Search All: open every engine in its own tab ---- */
+  function searchAll(q){
+    q = (q || "").trim();
+    if (!q) return;
+    const engines = Store.get().engines;
+    if (!engines.length) return;
+    let opened = 0, blocked = 0;
+    engines.forEach((e, i) => {
+      // small stagger helps some browsers allow multiple tabs
+      setTimeout(() => {
+        const w = window.open(buildUrl(e.url, q), "_blank", "noopener");
+        if (w) opened++; else blocked++;
+        if (i === engines.length - 1){
+          setTimeout(() => {
+            if (blocked > 0){
+              UI.toast(I18N.lang === "ar"
+                ? "اسمح بالنوافذ المنبثقة لهذا الموقع لفتح كل المحركات"
+                : "Allow pop-ups for this site to open all engines");
+            } else {
+              UI.toast(I18N.lang === "ar" ? `فُتحت ${opened} محركات` : `Opened ${opened} engines`);
+            }
+          }, 60);
+        }
+      }, i * 60);
+    });
+  }
+
+  function initAll(){
+    const box = document.getElementById("searchAll");
+    const input = document.getElementById("searchAllInput");
+    const go = document.getElementById("searchAllGo");
+    if (!input || !go) return;
+    const run = () => { searchAll(input.value); };
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter"){ e.preventDefault(); run(); }
+      if (e.key === "Escape"){ input.blur(); }
+    });
+    input.addEventListener("focus", () => box.classList.add("focused"));
+    input.addEventListener("blur",  () => box.classList.remove("focused"));
+    go.addEventListener("click", run);
   }
 
   function reorder(from, to){
@@ -1573,7 +1660,7 @@ const Search = (() => {
   const escHtml = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   const val = id => document.getElementById(id).value.trim();
 
-  return { render, openEngineModal, initHotkeys, focusFirst };
+  return { render, openEngineModal, initHotkeys, focusFirst, initAll, searchAll };
 })();
 
 /* js/bookmarks.js */
@@ -2452,6 +2539,7 @@ const App = (() => {
     Clock.start();
     Search.render();
     Search.initHotkeys();
+    Search.initAll();
     Bookmarks.renderAll();
     wire();
 
